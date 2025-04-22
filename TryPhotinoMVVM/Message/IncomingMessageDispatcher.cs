@@ -11,7 +11,7 @@ public class IncomingMessageDispatcher
 
     public void Dispatch(string json)
     {
-        var msg = JsonSerializer.Deserialize<IncomingMessage>(json, JsonContext.Default.IncomingMessage);
+        var msg = JsonSerializer.Deserialize<IncomingMessage>(json, JsonSerializerOptions.Web);
         if (msg == null) return;
 
         var handler = _handlers.FirstOrDefault(h => h.CanHandle(msg.Type));
