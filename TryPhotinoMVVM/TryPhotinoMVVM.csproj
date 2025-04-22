@@ -1,0 +1,55 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+
+        <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
+        <PublishSingleFile>true</PublishSingleFile>
+        <SelfContained>true</SelfContained>
+        <PublishTrimmed>true</PublishTrimmed>
+        <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+        <OutputType>Exe</OutputType>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+        <FileVersion>1.0.0.0</FileVersion>
+        <InformationalVersion>1.0.0-$(BuildDate)</InformationalVersion>
+        <BuildDate>$([System.DateTime]::UtcNow.ToString("yyyyMMddHHmmss"))</BuildDate>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.4" />
+        <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="9.0.4" />
+        <PackageReference Include="Photino.NET" Version="4.0.16" />
+        <PackageReference Include="ReactiveProperty" Version="9.7.0" />
+    </ItemGroup>
+
+    <Target Name="BuildFrontend" BeforeTargets="BeforeBuild">
+        <Message Text="Running Vite build for frontend..." />
+        <Exec Command="npm run build" WorkingDirectory="..\\frontend" />
+    </Target>
+
+    <ItemGroup>
+        <FrontendFiles Include="..\\frontend\\dist\\**\\*" />
+    </ItemGroup>
+
+    <Target Name="CopyFrontendToWwwroot" AfterTargets="BuildFrontend">
+        <Message Text="Copying frontend build to wwwroot..." />
+        <RemoveDir Directories="wwwroot" />
+        <MakeDir Directories="wwwroot" />
+        <Copy SourceFiles="@(FrontendFiles)" DestinationFiles="@(FrontendFiles->'wwwroot\\%(RecursiveDir)%(Filename)%(Extension)')" />
+    </Target>
+
+    <ItemGroup>
+        <EmbeddedResource Include="wwwroot\\**\\*" />
+    </ItemGroup>
+
+</Project>
