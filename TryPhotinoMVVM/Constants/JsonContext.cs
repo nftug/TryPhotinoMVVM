@@ -7,7 +7,4 @@ namespace TryPhotinoMVVM.Constants;
 [JsonSerializable(typeof(IncomingMessage))]
 [JsonSerializable(typeof(OutgoingMessage<CounterOutgoingPayload>))]
 [JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
-public partial class JsonContext : JsonSerializerContext
-{
-
-}
+public partial class JsonContext : JsonSerializerContext { }
