@@ -7,7 +7,11 @@ public class IncomingMessageDispatcher
 {
     private readonly List<IMessageHandler> _handlers = new();
 
-    public void Register(IMessageHandler handler) => _handlers.Add(handler);
+    public IncomingMessageDispatcher Register(IMessageHandler handler)
+    {
+        _handlers.Add(handler);
+        return this;
+    }
 
     public void Dispatch(string json)
     {

@@ -14,7 +14,7 @@ export type IncomingMessage<T> = {
 }
 
 // ViewModel types
-export type CounterInPayload = { value: number }
+export type CounterInPayload = { count: number }
 
 export type CounterOutPayload = { type: 'increment' | 'decrement' }
 

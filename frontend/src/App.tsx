@@ -19,7 +19,7 @@ function App() {
       </div>
       <h1>Vite + React</h1>
       <div className="card">
-        <div>count is {payload?.value}</div>
+        <div>count is {payload?.count}</div>
         <div style={{ marginTop: '1em' }}>
           <button onClick={() => sendMessage({ type: 'increment' })}>+</button>
           <button

@@ -9,15 +9,11 @@ public class CounterViewModel : IMessageHandler
 {
     public ReactiveProperty<int> Count { get; } = new();
 
-    private readonly OutgoingMessageDispatcher _dispatcher;
-
     public CounterViewModel(OutgoingMessageDispatcher dispatcher)
     {
-        _dispatcher = dispatcher;
-
         Count.Subscribe(value =>
         {
-            _dispatcher.Dispatch<CounterOutgoingPayload>(ViewModelType.Counter, new(value));
+            dispatcher.Dispatch<CounterOutgoingPayload>(ViewModelType.Counter, new(value));
         });
     }
 
@@ -43,7 +39,7 @@ public class CounterViewModel : IMessageHandler
     }
 }
 
-public record CounterOutgoingPayload(int Value);
+public record CounterOutgoingPayload(int Count);
 
 public enum CounterActionType
 {
