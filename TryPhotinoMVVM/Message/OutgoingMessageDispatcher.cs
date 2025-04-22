@@ -6,9 +6,9 @@ namespace TryPhotinoMVVM.Message;
 
 public class OutgoingMessageDispatcher(PhotinoWindow window)
 {
-    public void Dispatch<TPayload>(ViewModelType type, TPayload? payload)
+    public void Dispatch<TPayload>(ViewModelType type, TPayload payload)
     {
-        var message = new OutgoingMessage<TPayload>(type, payload);
+        var message = new ViewModelMessage<TPayload>(type, payload);
         var json = JsonSerializer.Serialize(message, JsonSerializerOptions.Web);
         window.SendWebMessage(json);
     }

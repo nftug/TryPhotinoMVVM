@@ -1,26 +1,26 @@
-export type OutgoingMessage<T> = {
-  type: ViewModelType
-  payload?: OutgoingSubMessage<T>
+export type ViewModelMessage<T> = {
+  type: ViewModelTypeName
+  payload?: T
 }
 
-export type OutgoingSubMessage<T> = {
+export type CommandMessage<T> = {
+  type: ViewModelTypeName
+  payload?: CommandPayload<T>
+}
+
+export type CommandPayload<T> = {
   type: string | 'init'
   payload?: T
 }
 
-export type IncomingMessage<T> = {
-  type: ViewModelType
-  payload?: T
-}
-
 // ViewModel types
-export type CounterInPayload = { count: number }
+export type CounterViewModel = { count: number }
 
-export type CounterOutPayload = { type: 'increment' | 'decrement' }
+export type CounterCommand = { type: 'increment' } | { type: 'decrement' }
 
 // Variation
-export type ViewModelType = 'Counter'
+export type ViewModelTypeName = 'Counter'
 
-export type OutPayloadType = CounterInPayload
+export type ViewModelType = CounterViewModel
 
-export type InPayloadType = CounterInPayload
+export type CommandType = CounterViewModel

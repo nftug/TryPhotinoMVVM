@@ -13,13 +13,13 @@ public class CounterViewModel : IMessageHandler
     {
         Count.Subscribe(value =>
         {
-            dispatcher.Dispatch<CounterOutgoingPayload>(ViewModelType.Counter, new(value));
+            dispatcher.Dispatch<CounterViewModelPayload>(ViewModelType.Counter, new(value));
         });
     }
 
     public bool CanHandle(ViewModelType type) => type == ViewModelType.Counter;
 
-    public void Handle(IncomingSubMessage? payload)
+    public void Handle(CommandPayload? payload)
     {
         if (payload?.Type == null) return;
         if (!Enum.TryParse<CounterActionType>(payload.Type, true, out var action)) return;
@@ -39,7 +39,7 @@ public class CounterViewModel : IMessageHandler
     }
 }
 
-public record CounterOutgoingPayload(int Count);
+public record CounterViewModelPayload(int Count);
 
 public enum CounterActionType
 {

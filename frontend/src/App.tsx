@@ -1,11 +1,11 @@
 import './App.css'
 import reactLogo from './assets/react.svg'
-import { CounterInPayload, CounterOutPayload } from './lib/api/types'
-import { usePhotinoMessage } from './lib/api/usePhotinoMessage'
+import { CounterCommand, CounterViewModel } from './lib/api/types'
+import useViewModel from './lib/api/useViewModel'
 import viteLogo from '/vite.svg'
 
 function App() {
-  const { payload, sendMessage } = usePhotinoMessage<CounterInPayload, CounterOutPayload>('Counter')
+  const { viewModel, dispatch } = useViewModel<CounterViewModel, CounterCommand>('Counter')
 
   return (
     <>
@@ -19,13 +19,10 @@ function App() {
       </div>
       <h1>Vite + React</h1>
       <div className="card">
-        <div>count is {payload?.count}</div>
+        <div>count is {viewModel?.count}</div>
         <div style={{ marginTop: '1em' }}>
-          <button onClick={() => sendMessage({ type: 'increment' })}>+</button>
-          <button
-            onClick={() => sendMessage({ type: 'decrement' })}
-            style={{ marginLeft: '0.5em' }}
-          >
+          <button onClick={() => dispatch({ type: 'increment' })}>+</button>
+          <button onClick={() => dispatch({ type: 'decrement' })} style={{ marginLeft: '0.5em' }}>
             -
           </button>
         </div>
