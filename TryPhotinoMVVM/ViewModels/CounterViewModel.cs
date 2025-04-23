@@ -1,3 +1,4 @@
+using System.Reactive.Linq;
 using System.Text.Json;
 using Photino.NET;
 using Reactive.Bindings;
@@ -7,19 +8,21 @@ namespace TryPhotinoMVVM.ViewModels;
 
 public class CounterViewModel : IMessageHandler
 {
-    public ReactiveProperty<int> Count { get; } = new();
+    public ReactivePropertySlim<int> Count { get; } = new();
+    public ReactivePropertySlim<int?> TwiceCount { get; } = new();
+    public ReactivePropertySlim<bool> IsProcessing { get; } = new();
 
     public CounterViewModel(ViewModelMessageDispatcher dispatcher)
     {
-        Count.Subscribe(value =>
-        {
-            dispatcher.Dispatch<CounterViewModelPayload>(ViewModelType.Counter, new(value));
-        });
+        Observable.CombineLatest(
+            Count, TwiceCount, IsProcessing,
+            (count, twiceCount, isProcessing) => new CounterViewModelPayload(count, twiceCount, isProcessing))
+            .Subscribe(v => dispatcher.Dispatch(ViewModelType.Counter, v));
     }
 
     public bool CanHandle(ViewModelType type) => type == ViewModelType.Counter;
 
-    public void Handle(CommandPayload? payload)
+    public async void Handle(CommandPayload? payload)
     {
         if (payload?.Type == null) return;
         if (!Enum.TryParse<CounterActionType>(payload.Type, true, out var action)) return;
@@ -30,16 +33,28 @@ public class CounterViewModel : IMessageHandler
                 Count.ForceNotify();
                 break;
             case CounterActionType.Increment:
-                Count.Value++;
+                await ChangeCountAsync(Count.Value + 1);
                 break;
             case CounterActionType.Decrement:
-                Count.Value--;
+                await ChangeCountAsync(Count.Value - 1);
                 break;
         }
     }
+
+    private async ValueTask ChangeCountAsync(int value)
+    {
+        if (IsProcessing.Value) return;
+
+        Count.Value = value;
+
+        IsProcessing.Value = true;
+        await Task.Delay(500);
+        TwiceCount.Value = Count.Value * 2;
+        IsProcessing.Value = false;
+    }
 }
 
-public record CounterViewModelPayload(int Count);
+public record CounterViewModelPayload(int Count, int? TwiceCount, bool IsProcessing);
 
 public enum CounterActionType
 {
