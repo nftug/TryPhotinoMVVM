@@ -12,9 +12,10 @@ public static class AppSchemeHandler
         .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?
         .InformationalVersion?.Split('-').Last() ?? "dev";
 
-    public static Stream Handle(object sender, string scheme, string url, out string contentType)
+    public static Stream Handle(object sender, string scheme, string urlString, out string contentType)
     {
-        var path = url.Replace("app://", "").Split('?')[0].TrimStart('/');
+        var uri = new Uri(urlString);
+        var path = uri.LocalPath;
 
         var fileInfo = FileProvider.GetFileInfo(path);
         if (!fileInfo.Exists)
@@ -25,7 +26,8 @@ public static class AppSchemeHandler
                 return new MemoryStream(Encoding.UTF8.GetBytes("404 Not Found"));
             }
 
-            return Handle(sender, scheme, $"app://index.html?hash={BuildDateHash}", out contentType);
+            string indexUrl = $"{uri.Scheme}://{uri.Host}/index.html?hash={BuildDateHash}";
+            return Handle(sender, scheme, indexUrl, out contentType);
         }
 
         contentType = Path.GetExtension(path).ToLower() switch
