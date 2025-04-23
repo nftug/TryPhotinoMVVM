@@ -1,4 +1,3 @@
-using System.Reflection;
 using System.Text;
 using Microsoft.Extensions.FileProviders;
 
@@ -8,25 +7,21 @@ public static class AppSchemeHandler
 {
     public static readonly EmbeddedFileProvider FileProvider = new(typeof(Program).Assembly, "TryPhotinoMVVM.wwwroot");
 
-    public static readonly string BuildDateHash = typeof(Program).Assembly
-        .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?
-        .InformationalVersion?.Split('-').Last() ?? "dev";
-
     public static Stream Handle(object sender, string scheme, string urlString, out string contentType)
     {
         var uri = new Uri(urlString);
-        var path = uri.LocalPath;
+        string path = uri.LocalPath;
 
         var fileInfo = FileProvider.GetFileInfo(path);
         if (!fileInfo.Exists)
         {
-            if (path == "index.html")
+            if (path == "/index.html")
             {
                 contentType = "text/plain";
                 return new MemoryStream(Encoding.UTF8.GetBytes("404 Not Found"));
             }
 
-            string indexUrl = $"{uri.Scheme}://{uri.Host}/index.html?hash={BuildDateHash}";
+            string indexUrl = $"{uri.Scheme}://{uri.Host}/index.html";
             return Handle(sender, scheme, indexUrl, out contentType);
         }
 

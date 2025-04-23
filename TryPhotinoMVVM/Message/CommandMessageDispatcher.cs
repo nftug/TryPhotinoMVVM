@@ -3,11 +3,11 @@ using TryPhotinoMVVM.Constants;
 
 namespace TryPhotinoMVVM.Message;
 
-public class IncomingMessageDispatcher
+public class CommandMessageDispatcher
 {
     private readonly List<IMessageHandler> _handlers = new();
 
-    public IncomingMessageDispatcher Register(IMessageHandler handler)
+    public CommandMessageDispatcher Register(IMessageHandler handler)
     {
         _handlers.Add(handler);
         return this;

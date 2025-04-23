@@ -12,18 +12,14 @@
         <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
         <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
         <AllowedReferenceRelatedFileExtensions>none</AllowedReferenceRelatedFileExtensions>
+
+        <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+        <SourceRevisionId>build$([System.DateTime]::UtcNow.ToString("yyyyMMddHHmmss"))</SourceRevisionId>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
         <OutputType>Exe</OutputType>
-    </PropertyGroup>
-
-    <PropertyGroup>
-        <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-        <AssemblyVersion>1.0.0.0</AssemblyVersion>
-        <FileVersion>1.0.0.0</FileVersion>
-        <InformationalVersion>1.0.0-$(BuildDate)</InformationalVersion>
-        <BuildDate>$([System.DateTime]::UtcNow.ToString("yyyyMMddHHmmss"))</BuildDate>
     </PropertyGroup>
 
     <ItemGroup>
@@ -32,22 +28,6 @@
         <PackageReference Include="Photino.NET" Version="4.0.16" />
         <PackageReference Include="ReactiveProperty" Version="9.7.0" />
     </ItemGroup>
-
-    <Target Name="BuildFrontend" BeforeTargets="BeforeBuild">
-        <Message Text="Running Vite build for frontend..." />
-        <Exec Command="npm run build" WorkingDirectory="..\\frontend" />
-    </Target>
-
-    <ItemGroup>
-        <FrontendFiles Include="..\\frontend\\dist\\**\\*" />
-    </ItemGroup>
-
-    <Target Name="CopyFrontendToWwwroot" AfterTargets="BuildFrontend">
-        <Message Text="Copying frontend build to wwwroot..." />
-        <RemoveDir Directories="wwwroot" />
-        <MakeDir Directories="wwwroot" />
-        <Copy SourceFiles="@(FrontendFiles)" DestinationFiles="@(FrontendFiles->'wwwroot\\%(RecursiveDir)%(Filename)%(Extension)')" />
-    </Target>
 
     <ItemGroup>
         <EmbeddedResource Include="wwwroot\\**\\*" />

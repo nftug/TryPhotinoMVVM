@@ -13,14 +13,4 @@ export type CommandPayload<T> = {
   payload?: T
 }
 
-// ViewModel types
-export type CounterViewModel = { count: number }
-
-export type CounterCommand = { type: 'increment' } | { type: 'decrement' }
-
-// Variation
-export type ViewModelTypeName = 'Counter'
-
-export type ViewModelType = CounterViewModel
-
-export type CommandType = CounterViewModel
+export type ViewModelTypeName = string & { __brand: 'ViewModelTypeName' }

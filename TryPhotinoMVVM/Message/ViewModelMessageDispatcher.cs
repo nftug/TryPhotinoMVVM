@@ -4,7 +4,7 @@ using TryPhotinoMVVM.Constants;
 
 namespace TryPhotinoMVVM.Message;
 
-public class OutgoingMessageDispatcher(PhotinoWindow window)
+public class ViewModelMessageDispatcher(PhotinoWindow window)
 {
     public void Dispatch<TPayload>(ViewModelType type, TPayload payload)
     {

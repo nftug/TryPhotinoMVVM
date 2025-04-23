@@ -9,7 +9,7 @@ public class CounterViewModel : IMessageHandler
 {
     public ReactiveProperty<int> Count { get; } = new();
 
-    public CounterViewModel(OutgoingMessageDispatcher dispatcher)
+    public CounterViewModel(ViewModelMessageDispatcher dispatcher)
     {
         Count.Subscribe(value =>
         {
