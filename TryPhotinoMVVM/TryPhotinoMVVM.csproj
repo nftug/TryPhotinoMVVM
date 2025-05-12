@@ -8,10 +8,14 @@
 
         <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
         <PublishSingleFile>true</PublishSingleFile>
+        <PublishTrimmed>true</PublishTrimmed>
         <SelfContained>true</SelfContained>
+        <PublishAot>true</PublishAot>
+        <OptimizationPreference>Size</OptimizationPreference>
         <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
         <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
         <AllowedReferenceRelatedFileExtensions>none</AllowedReferenceRelatedFileExtensions>
+        <InvariantGlobalization>true</InvariantGlobalization>
 
         <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>

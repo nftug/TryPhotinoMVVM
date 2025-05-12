@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import type { CommandPayload, ViewModelTypeName } from './types'
 import { dispatchCommand, registerViewHandler, unregisterViewHandler } from './viewHandler'
 
-const useViewModel = <TViewModel, TCommandPayload extends CommandPayload<TCommandPayload>>(
+const useViewModel = <TViewModel, TCommandPayload extends CommandPayload>(
   type: ViewModelTypeName
 ) => {
   const [viewModel, setViewModel] = useState<TViewModel>()

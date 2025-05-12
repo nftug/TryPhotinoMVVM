@@ -8,6 +8,10 @@ export type CounterViewModel = {
   count: number
   twiceCount?: number
   isProcessing: boolean
+  canDecrement: boolean
 }
 
-export type CounterCommand = { type: 'increment' } | { type: 'decrement' }
+export type CounterCommand =
+  | { type: 'increment' }
+  | { type: 'decrement' }
+  | { type: 'set'; payload: { value: number } }

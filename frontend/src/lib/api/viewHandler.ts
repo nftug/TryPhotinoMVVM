@@ -29,6 +29,6 @@ export const unregisterViewHandler = (type: ViewModelTypeName, handler: MessageH
   handlerMap.get(type)?.delete(handler)
 }
 
-export const dispatchCommand = <T extends CommandPayload<T>>(message: CommandMessage<T>) => {
+export const dispatchCommand = <T extends CommandPayload>(message: CommandMessage<T>) => {
   window.external.sendMessage(JSON.stringify(message))
 }

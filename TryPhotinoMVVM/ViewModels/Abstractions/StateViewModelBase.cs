@@ -1,5 +1,6 @@
 using System.Reactive.Disposables;
 using System.Text.Json;
+using System.Text.Json.Serialization.Metadata;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using TryPhotinoMVVM.Constants;
@@ -18,16 +19,17 @@ public abstract class StateViewModelBase<TPayload, TAction> : IMessageHandler, I
     protected StateViewModelBase(ViewModelMessageDispatcher dispatcher, TPayload defaultPayload)
     {
         State = new ReactivePropertySlim<TPayload>(defaultPayload).AddTo(Disposable);
-        State.Subscribe(v => dispatcher.Dispatch(ViewModelType, v)).AddTo(Disposable);
+        State.Subscribe(v => dispatcher.Dispatch(ViewModelType, v, StateJsonTypeInfo)).AddTo(Disposable);
     }
 
     public abstract ViewModelType ViewModelType { get; }
 
+    protected abstract JsonTypeInfo<ViewModelMessage<TPayload>> StateJsonTypeInfo { get; }
+
     public bool CanHandle(ViewModelType type) => type == ViewModelType;
 
-    public ValueTask HandleAsync(CommandPayload? payload)
+    public ValueTask HandleAsync(CommandPayload payload)
     {
-        if (payload?.Type == null) return ValueTask.CompletedTask;
         if (payload.Type.Equals(DefaultActionType.Init, StringComparison.OrdinalIgnoreCase))
             return HandleInitAsync();
         if (!Enum.TryParse<TAction>(payload.Type, true, out var action))

@@ -1,4 +1,4 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Drawing;
 using Microsoft.Extensions.DependencyInjection;
 using Photino.NET;
 using TryPhotinoMVVM.Constants;
@@ -15,6 +15,7 @@ public class Program
         string embeddedAppUrlHost = OperatingSystem.IsWindows() ? "http://localhost" : "app://localhost/";
         string embeddedAppUrl = embeddedAppUrlHost + $"?hash={typeof(Program).Assembly.GetBuildDateHash()}";
         string appUrl = EnvironmentConstants.IsDebugMode ? "http://localhost:5173/" : embeddedAppUrl;
+        var windowSize = new Size(1145, 840);
 
         var window = new PhotinoWindow();
 
@@ -29,12 +30,19 @@ public class Program
 
         window
             .SetTitle("Photino MVVM Counter")
+            .SetSize(windowSize)
+            .Center()
             .RegisterCustomSchemeHandler(new Uri(embeddedAppUrl).Scheme, AppSchemeHandler.Handle)
             .LoadRawString($"""<meta http-equiv="refresh" content="0; URL='{appUrl}'" />""")
             .RegisterWebMessageReceivedHandler(async (sender, messageJson) =>
             {
                 var dispatcher = serviceProvider.GetRequiredService<CommandMessageDispatcher>();
                 await dispatcher.DispatchAsync(messageJson);
+            })
+            .RegisterWindowCreatedHandler((_, _) =>
+            {
+                // MacではWindowの生成後でのみサイズの変更が可能
+                window.SetSize(windowSize);
             });
 
         window.WaitForClose();

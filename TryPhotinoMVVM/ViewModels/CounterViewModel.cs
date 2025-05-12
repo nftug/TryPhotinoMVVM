@@ -1,4 +1,7 @@
 using System.Text.Json;
+using System.Text.Json.Serialization.Metadata;
+using TryPhotinoMVVM.Constants;
+using TryPhotinoMVVM.Extensions;
 using TryPhotinoMVVM.Message;
 using TryPhotinoMVVM.ViewModels.Abstractions;
 
@@ -9,17 +12,33 @@ public class CounterViewModel(ViewModelMessageDispatcher dispatcher)
 {
     public override ViewModelType ViewModelType => ViewModelType.Counter;
 
+    protected override JsonTypeInfo<ViewModelMessage<CounterViewModelPayload>> StateJsonTypeInfo
+        => JsonContext.Default.ViewModelMessageCounterViewModelPayload;
+
     protected override ValueTask HandleActionAsync(CounterActionType action, JsonElement? payload)
-        => action switch
+        => (action, payload) switch
         {
-            CounterActionType.Increment => ChangeCountAsync(State.Value.Count + 1),
-            CounterActionType.Decrement => ChangeCountAsync(State.Value.Count - 1),
+            (CounterActionType.Set, { }) => SetCountAsync(payload.Value),
+            (CounterActionType.Increment, _) => ChangeCountAsync(State.Value.Count + 1),
+            (CounterActionType.Decrement, _) => ChangeCountAsync(State.Value.Count - 1),
             _ => ValueTask.CompletedTask,
         };
 
-    private async ValueTask ChangeCountAsync(int value)
+    private ValueTask SetCountAsync(JsonElement payload)
     {
-        if (State.Value.IsProcessing) return;
+        var actionPayload = payload.ParsePayload(JsonContext.Default.CounterSetActionPayload);
+        if (actionPayload is not { }) return ValueTask.CompletedTask;
+        return ChangeCountAsync(actionPayload.Value);
+    }
+
+    private async ValueTask ChangeCountAsync(long value)
+    {
+        if (State.Value.IsProcessing || State.Value.Count == value) return;
+        if (value < 0)
+        {
+            State.ForceNotify();
+            return;
+        }
 
         State.Value = State.Value with { Count = value, IsProcessing = true };
         await Task.Delay(500);
@@ -27,10 +46,16 @@ public class CounterViewModel(ViewModelMessageDispatcher dispatcher)
     }
 }
 
-public record CounterViewModelPayload(int Count, int? TwiceCount, bool IsProcessing);
+public record CounterViewModelPayload(long Count, long? TwiceCount, bool IsProcessing)
+{
+    public bool CanDecrement => Count > 0;
+}
+
+public record CounterSetActionPayload(long Value);
 
 public enum CounterActionType
 {
+    Set,
     Increment,
     Decrement
 }
