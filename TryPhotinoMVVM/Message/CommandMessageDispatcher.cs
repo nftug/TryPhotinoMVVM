@@ -13,12 +13,12 @@ public class CommandMessageDispatcher
         return this;
     }
 
-    public void Dispatch(string json)
+    public async ValueTask DispatchAsync(string json)
     {
         var msg = JsonSerializer.Deserialize<CommandMessage>(json, JsonSerializerOptions.Web);
         if (msg == null) return;
 
         var handler = _handlers.FirstOrDefault(h => h.CanHandle(msg.Type));
-        handler?.Handle(msg.Payload);
+        if (handler != null) await handler.HandleAsync(msg.Payload);
     }
 }

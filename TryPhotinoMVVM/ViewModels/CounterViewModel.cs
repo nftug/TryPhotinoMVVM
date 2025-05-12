@@ -1,56 +1,29 @@
-using System.Reactive.Linq;
 using System.Text.Json;
-using Photino.NET;
-using Reactive.Bindings;
 using TryPhotinoMVVM.Message;
+using TryPhotinoMVVM.ViewModels.Abstractions;
 
 namespace TryPhotinoMVVM.ViewModels;
 
-public class CounterViewModel : IMessageHandler
+public class CounterViewModel(ViewModelMessageDispatcher dispatcher)
+    : StateViewModelBase<CounterViewModelPayload, CounterActionType>(dispatcher, new(0, null, false))
 {
-    public ReactivePropertySlim<int> Count { get; } = new();
-    public ReactivePropertySlim<int?> TwiceCount { get; } = new();
-    public ReactivePropertySlim<bool> IsProcessing { get; } = new();
+    public override ViewModelType ViewModelType => ViewModelType.Counter;
 
-    public CounterViewModel(ViewModelMessageDispatcher dispatcher)
-    {
-        Observable.CombineLatest(
-            Count, TwiceCount, IsProcessing,
-            (count, twiceCount, isProcessing) => new CounterViewModelPayload(count, twiceCount, isProcessing))
-            .Subscribe(v => dispatcher.Dispatch(ViewModelType.Counter, v));
-    }
-
-    public bool CanHandle(ViewModelType type) => type == ViewModelType.Counter;
-
-    public async void Handle(CommandPayload? payload)
-    {
-        if (payload?.Type == null) return;
-        if (!Enum.TryParse<CounterActionType>(payload.Type, true, out var action)) return;
-
-        switch (action)
+    protected override ValueTask HandleActionAsync(CounterActionType action, JsonElement? payload)
+        => action switch
         {
-            case CounterActionType.Init:
-                Count.ForceNotify();
-                break;
-            case CounterActionType.Increment:
-                await ChangeCountAsync(Count.Value + 1);
-                break;
-            case CounterActionType.Decrement:
-                await ChangeCountAsync(Count.Value - 1);
-                break;
-        }
-    }
+            CounterActionType.Increment => ChangeCountAsync(State.Value.Count + 1),
+            CounterActionType.Decrement => ChangeCountAsync(State.Value.Count - 1),
+            _ => ValueTask.CompletedTask,
+        };
 
     private async ValueTask ChangeCountAsync(int value)
     {
-        if (IsProcessing.Value) return;
+        if (State.Value.IsProcessing) return;
 
-        Count.Value = value;
-
-        IsProcessing.Value = true;
+        State.Value = State.Value with { Count = value, IsProcessing = true };
         await Task.Delay(500);
-        TwiceCount.Value = Count.Value * 2;
-        IsProcessing.Value = false;
+        State.Value = State.Value with { TwiceCount = value * 2, IsProcessing = false };
     }
 }
 
@@ -58,7 +31,6 @@ public record CounterViewModelPayload(int Count, int? TwiceCount, bool IsProcess
 
 public enum CounterActionType
 {
-    Init,
     Increment,
     Decrement
 }

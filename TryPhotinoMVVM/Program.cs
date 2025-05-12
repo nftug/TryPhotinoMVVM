@@ -7,10 +7,10 @@ using TryPhotinoMVVM.Message;
 using TryPhotinoMVVM.Utils;
 using TryPhotinoMVVM.ViewModels;
 
-class Program
+public class Program
 {
     [STAThread]
-    static void Main()
+    public static void Main()
     {
         string embeddedAppUrlHost = OperatingSystem.IsWindows() ? "http://localhost" : "app://localhost/";
         string embeddedAppUrl = embeddedAppUrlHost + $"?hash={typeof(Program).Assembly.GetBuildDateHash()}";
@@ -22,10 +22,8 @@ class Program
             .AddSingleton(window)
             .AddSingleton<ViewModelMessageDispatcher>()
             .AddSingleton<CommandMessageDispatcher>(sp =>
-            {
-                var dispatcher = new CommandMessageDispatcher();
-                return dispatcher.Register(sp.GetRequiredService<CounterViewModel>());
-            })
+                new CommandMessageDispatcher()
+                    .Register(sp.GetRequiredService<CounterViewModel>()))
             .AddSingleton<CounterViewModel>()
             .BuildServiceProvider();
 
@@ -33,10 +31,10 @@ class Program
             .SetTitle("Photino MVVM Counter")
             .RegisterCustomSchemeHandler(new Uri(embeddedAppUrl).Scheme, AppSchemeHandler.Handle)
             .LoadRawString($"""<meta http-equiv="refresh" content="0; URL='{appUrl}'" />""")
-            .RegisterWebMessageReceivedHandler((sender, messageJson) =>
+            .RegisterWebMessageReceivedHandler(async (sender, messageJson) =>
             {
                 var dispatcher = serviceProvider.GetRequiredService<CommandMessageDispatcher>();
-                dispatcher.Dispatch(messageJson);
+                await dispatcher.DispatchAsync(messageJson);
             });
 
         window.WaitForClose();
