@@ -1,26 +1,10 @@
 import { CommandMessage, CommandPayload, ViewModelMessage, ViewModelTypeName } from './types'
 
-type MessageHandler<T = unknown> = (payload: T) => void
-
-let photinoReceiverRegistered = false
+type MessageHandler = (payload: unknown) => void
 
 const handlerMap = new Map<ViewModelTypeName, Set<MessageHandler>>()
 
-export const registerViewHandler = (type: ViewModelTypeName, handler: MessageHandler) => {
-  if (!handlerMap.has(type)) {
-    handlerMap.set(type, new Set())
-  }
-  handlerMap.get(type)!.add(handler)
-}
-
-export const unregisterViewHandler = (type: ViewModelTypeName, handler: MessageHandler) => {
-  handlerMap.get(type)?.delete(handler)
-}
-
 export const initializeViewHandler = () => {
-  if (photinoReceiverRegistered) return
-  photinoReceiverRegistered = true
-
   window.external.receiveMessage((json) => {
     try {
       const msg: ViewModelMessage<unknown> = JSON.parse(json)
@@ -32,6 +16,17 @@ export const initializeViewHandler = () => {
       console.warn('Invalid message from Photino:', json)
     }
   })
+}
+
+export const registerViewHandler = (type: ViewModelTypeName, handler: MessageHandler) => {
+  if (!handlerMap.has(type)) {
+    handlerMap.set(type, new Set())
+  }
+  handlerMap.get(type)!.add(handler)
+}
+
+export const unregisterViewHandler = (type: ViewModelTypeName, handler: MessageHandler) => {
+  handlerMap.get(type)?.delete(handler)
 }
 
 export const dispatchCommand = <T extends CommandPayload<T>>(message: CommandMessage<T>) => {

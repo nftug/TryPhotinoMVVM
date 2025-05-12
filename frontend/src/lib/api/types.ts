@@ -9,7 +9,7 @@ export type CommandMessage<T> = {
 }
 
 export type CommandPayload<T> = {
-  type: string | 'init'
+  type: string
   payload?: T
 }
 
