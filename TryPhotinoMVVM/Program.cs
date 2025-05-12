@@ -1,5 +1,4 @@
-﻿using System.Drawing;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Photino.NET;
 using TryPhotinoMVVM.Constants;
 using TryPhotinoMVVM.Extensions;
@@ -15,7 +14,6 @@ public class Program
         string embeddedAppUrlHost = OperatingSystem.IsWindows() ? "http://localhost" : "app://localhost/";
         string embeddedAppUrl = embeddedAppUrlHost + $"?hash={typeof(Program).Assembly.GetBuildDateHash()}";
         string appUrl = EnvironmentConstants.IsDebugMode ? "http://localhost:5173/" : embeddedAppUrl;
-        var windowSize = new Size(1145, 840);
 
         var window = new PhotinoWindow();
 
@@ -30,20 +28,40 @@ public class Program
 
         window
             .SetTitle("Photino MVVM Counter")
-            .SetSize(windowSize)
+            .SetUseOsDefaultSize(false)
+            .SetSize(new(1145, 840))
             .Center()
             .RegisterCustomSchemeHandler(new Uri(embeddedAppUrl).Scheme, AppSchemeHandler.Handle)
             .LoadRawString($"""<meta http-equiv="refresh" content="0; URL='{appUrl}'" />""")
             .RegisterWebMessageReceivedHandler(async (sender, messageJson) =>
             {
-                var dispatcher = serviceProvider.GetRequiredService<CommandMessageDispatcher>();
-                await dispatcher.DispatchAsync(messageJson);
-            })
-            .RegisterWindowCreatedHandler((_, _) =>
-            {
-                // MacではWindowの生成後でのみサイズの変更が可能
-                window.SetSize(windowSize);
+                try
+                {
+                    var dispatcher = serviceProvider.GetRequiredService<CommandMessageDispatcher>();
+                    await dispatcher.DispatchAsync(messageJson);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+
+                    var dispatcher = serviceProvider.GetRequiredService<ViewModelMessageDispatcher>();
+                    dispatcher.Dispatch(
+                       ViewModelType.Error, new(ex.Message), JsonContext.Default.ViewModelMessageErrorMessage);
+                }
             });
+
+        AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
+        {
+            var ex = e.ExceptionObject as Exception;
+            Console.WriteLine(ex?.ToString());
+            Environment.Exit(1);
+        };
+
+        TaskScheduler.UnobservedTaskException += (sender, e) =>
+        {
+            Console.WriteLine(e.Exception.ToString());
+            e.SetObserved();
+        };
 
         window.WaitForClose();
     }

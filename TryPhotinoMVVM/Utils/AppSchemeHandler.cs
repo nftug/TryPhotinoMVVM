@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Text;
 using Microsoft.Extensions.FileProviders;
 
@@ -5,7 +6,8 @@ namespace TryPhotinoMVVM.Utils;
 
 public static class AppSchemeHandler
 {
-    public static readonly EmbeddedFileProvider FileProvider = new(typeof(Program).Assembly, "TryPhotinoMVVM.wwwroot");
+    private static readonly Assembly _assembly = typeof(Program).Assembly;
+    public static readonly EmbeddedFileProvider FileProvider = new(_assembly, $"{_assembly.GetName().Name}.wwwroot");
 
     public static Stream Handle(object sender, string scheme, string urlString, out string contentType)
     {

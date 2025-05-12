@@ -1,9 +1,12 @@
 import reactLogo from '@/assets/react.svg'
 import CounterCard from '@/features/counter/components/CounterCard'
 import './App.css'
+import { useErrorHandler } from './lib/api/useErrorHandler'
 import viteLogo from '/vite.svg'
 
 function App() {
+  useErrorHandler()
+
   return (
     <>
       <div>
