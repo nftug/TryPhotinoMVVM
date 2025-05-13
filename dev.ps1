@@ -6,8 +6,10 @@ switch ($mode) {
     "run" {
         Write-Host "🟢 Starting frontend and app..."
 
+        Push-Location ./frontend
         npm install --prefix frontend
-        $frontend = Start-Process "npm" -ArgumentList "run", "dev" -WorkingDirectory "frontend" -PassThru
+        $frontend = Start-Process powershell -ArgumentList "-Command", { npm run dev } -PassThru
+        Pop-Location
 
         dotnet watch --project TryPhotinoMVVM/TryPhotinoMVVM.csproj run
 
@@ -19,8 +21,10 @@ switch ($mode) {
     "publish" {
         Write-Host "🌱 Building frontend..."
 
+        Push-Location ./frontend
         npm install --prefix frontend
         npm run build --prefix frontend
+        Pop-Location
 
         Write-Host "🧹 Cleaning wwwroot..."
         Remove-Item -Recurse -Force TryPhotinoMVVM/wwwroot

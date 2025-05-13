@@ -16,14 +16,17 @@
         <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
         <AllowedReferenceRelatedFileExtensions>none</AllowedReferenceRelatedFileExtensions>
         <InvariantGlobalization>true</InvariantGlobalization>
+        <DebugSymbols>false</DebugSymbols>
+        <DebugType>none</DebugType>
 
         <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
         <SourceRevisionId>build$([System.DateTime]::UtcNow.ToString("yyyyMMddHHmmss"))</SourceRevisionId>
     </PropertyGroup>
 
-    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
         <OutputType>Exe</OutputType>
+        <DebugSymbols>true</DebugSymbols>
     </PropertyGroup>
 
     <ItemGroup>

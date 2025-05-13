@@ -25,6 +25,10 @@ case "$1" in
 
     echo "🛠 Publishing .NET backend..."
     dotnet publish TryPhotinoMVVM/TryPhotinoMVVM.csproj -c Release
+
+    if [ "$(uname)" == 'Darwin' ]; then
+      ./publish_mac_app.sh
+    fi
     ;;
   *)
     echo "Usage: $0 {run|publish}"
