@@ -17,4 +17,15 @@ public class ViewModelMessageDispatcher(PhotinoWindow window)
         var json = JsonSerializer.Serialize(message, jsonTypeInfo);
         window.SendWebMessage(json);
     }
+
+    public void DispatchEvent<TPayload>(
+        ViewModelType type,
+        EventMessagePayload<TPayload> payload,
+        JsonTypeInfo<EventMessage<TPayload>> jsonTypeInfo
+    )
+    {
+        var message = new EventMessage<TPayload>($"{type}_Event", payload);
+        var json = JsonSerializer.Serialize(message, jsonTypeInfo);
+        window.SendWebMessage(json);
+    }
 }

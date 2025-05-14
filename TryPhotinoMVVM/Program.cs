@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Photino.NET;
 using TryPhotinoMVVM.Constants;
 using TryPhotinoMVVM.Extensions;
@@ -24,7 +25,10 @@ public class Program
                 new CommandMessageDispatcher()
                     .Register(sp.GetRequiredService<CounterViewModel>()))
             .AddSingleton<CounterViewModel>()
+            .AddLogging(builder => builder.AddConsole())
             .BuildServiceProvider();
+
+        var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
 
         window
             .SetTitle("Photino MVVM Counter")
@@ -42,24 +46,24 @@ public class Program
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.ToString());
+                    logger.LogError(ex.ToString());
 
                     var dispatcher = serviceProvider.GetRequiredService<ViewModelMessageDispatcher>();
-                    dispatcher.Dispatch(
-                       ViewModelType.Error, new(ex.Message), JsonContext.Default.ViewModelMessageErrorMessage);
+                    dispatcher.DispatchEvent(
+                       ViewModelType.Error, new("error", new(ex.Message)), JsonContext.Default.EventMessageErrorMessage);
                 }
             });
 
         AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
         {
             var ex = e.ExceptionObject as Exception;
-            Console.WriteLine(ex?.ToString());
+            logger.LogError(ex?.ToString());
             Environment.Exit(1);
         };
 
         TaskScheduler.UnobservedTaskException += (sender, e) =>
         {
-            Console.WriteLine(e.Exception.ToString());
+            logger.LogError(e.Exception.ToString());
             e.SetObserved();
         };
 

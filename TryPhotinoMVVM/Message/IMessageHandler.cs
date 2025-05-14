@@ -5,5 +5,5 @@ namespace TryPhotinoMVVM.Message;
 public interface IMessageHandler
 {
     bool CanHandle(ViewModelType type);
-    ValueTask HandleAsync(CommandPayload payload);
+    ValueTask HandleAsync(CommandMessagePayload payload);
 }

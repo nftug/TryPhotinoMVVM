@@ -1,14 +1,19 @@
 import { useEffect } from 'react'
-import { CommandPayload, ViewModelTypeName } from './types'
+import { ViewModelTypeName } from './types'
 import useViewModel from './useViewModel'
 
 export const useErrorHandler = () => {
-  const { viewModel } = useViewModel<ErrorViewModel, CommandPayload>('Error' as ViewModelTypeName)
+  const { onEvent } = useViewModel<never, never, ErrorEventPayload>('Error' as ViewModelTypeName)
 
   useEffect(() => {
-    if (!viewModel) return
-    alert(viewModel.message)
-  }, [viewModel])
+    const unsubscribe = onEvent('error', (payload) => {
+      alert(payload.message)
+    })
+    return () => unsubscribe()
+  }, [onEvent])
 }
 
-export type ErrorViewModel = { message: string }
+export type ErrorEventPayload = {
+  type: 'error'
+  payload: { message: string }
+}

@@ -1,16 +1,28 @@
+import { atom } from 'jotai'
+import { atomFamily } from 'jotai/utils'
 import { CommandMessage, CommandPayload, ViewModelMessage, ViewModelTypeName } from './types'
 
 type MessageHandler = (payload: unknown) => void
 
-const handlerMap = new Map<ViewModelTypeName, Set<MessageHandler>>()
+export const stateHandlerMap = new Map<ViewModelTypeName, MessageHandler>()
+
+export const eventHandlerMap = new Map<ViewModelTypeName, MessageHandler>()
+
+export const viewModelsFamily = atomFamily(() => atom<unknown>())
 
 export const initializeViewHandler = () => {
   window.external.receiveMessage((json) => {
     try {
       const msg: ViewModelMessage<unknown> = JSON.parse(json)
-      const handlers = handlerMap.get(msg.type)
-      if (handlers) {
-        handlers.forEach((handler) => handler(msg.payload))
+      const { type, payload } = msg
+
+      if (type.endsWith('_Event')) {
+        const key = type.replace(/_Event$/, '') as ViewModelTypeName
+        const eventHandler = eventHandlerMap.get(key)
+        if (eventHandler) eventHandler(payload)
+      } else {
+        const stateHandler = stateHandlerMap.get(type as ViewModelTypeName)
+        if (stateHandler) stateHandler(payload)
       }
     } catch {
       console.warn('Invalid message from Photino:', json)
@@ -18,17 +30,5 @@ export const initializeViewHandler = () => {
   })
 }
 
-export const registerViewHandler = (type: ViewModelTypeName, handler: MessageHandler) => {
-  if (!handlerMap.has(type)) {
-    handlerMap.set(type, new Set())
-  }
-  handlerMap.get(type)!.add(handler)
-}
-
-export const unregisterViewHandler = (type: ViewModelTypeName, handler: MessageHandler) => {
-  handlerMap.get(type)?.delete(handler)
-}
-
-export const dispatchCommand = <T extends CommandPayload>(message: CommandMessage<T>) => {
+export const dispatchCommand = <T extends CommandPayload>(message: CommandMessage<T>) =>
   window.external.sendMessage(JSON.stringify(message))
-}

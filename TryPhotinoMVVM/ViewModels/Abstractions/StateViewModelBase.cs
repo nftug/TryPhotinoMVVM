@@ -28,7 +28,7 @@ public abstract class StateViewModelBase<TPayload, TAction> : IMessageHandler, I
 
     public bool CanHandle(ViewModelType type) => type == ViewModelType;
 
-    public ValueTask HandleAsync(CommandPayload payload)
+    public ValueTask HandleAsync(CommandMessagePayload payload)
     {
         if (payload.Type.Equals(DefaultActionType.Init, StringComparison.OrdinalIgnoreCase))
             return HandleInitAsync();
