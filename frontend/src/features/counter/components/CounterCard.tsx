@@ -2,27 +2,34 @@ import { useCounterViewModel } from '@/features/counter/api/useCounterViewModel'
 import { useEffect, useRef } from 'react'
 
 const CounterCard = () => {
-  const { viewModel, dispatch } = useCounterViewModel()
+  const { state, dispatch, onEvent } = useCounterViewModel()
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    if (inputRef.current && viewModel) {
-      inputRef.current.value = viewModel.count.toString()
+    const unsubscribeFizzBuzz = onEvent('fizzBuzz', (payload) => {
+      alert(payload)
+    })
+    return () => unsubscribeFizzBuzz()
+  }, [onEvent])
+
+  useEffect(() => {
+    if (inputRef.current && state) {
+      inputRef.current.value = state.count.toString()
     }
-  }, [viewModel])
+  }, [state])
 
   return (
-    viewModel && (
+    state && (
       <div className="card">
-        <div>Count is {viewModel.count}</div>
+        <div>Count is {state.count}</div>
 
         <div style={{ marginTop: '1em' }}>
-          <fieldset disabled={viewModel.isProcessing} style={{ border: 'none', padding: '0' }}>
+          <fieldset disabled={state.isProcessing} style={{ border: 'none', padding: '0' }}>
             <button onClick={() => dispatch({ type: 'increment' })}>+</button>
             <button
               onClick={() => dispatch({ type: 'decrement' })}
               style={{ marginLeft: '0.5em' }}
-              disabled={!viewModel.canDecrement}
+              disabled={!state.canDecrement}
             >
               -
             </button>
@@ -32,9 +39,9 @@ const CounterCard = () => {
         <div style={{ marginTop: '1em' }}>
           <input
             type="number"
-            defaultValue={viewModel.count}
+            defaultValue={state.count}
             ref={inputRef}
-            disabled={viewModel.isProcessing}
+            disabled={state.isProcessing}
             onBlur={() => {
               const v = inputRef.current && parseInt(inputRef.current.value)
               if (v && !isNaN(v)) dispatch({ type: 'set', payload: { value: v } })
@@ -43,11 +50,11 @@ const CounterCard = () => {
         </div>
 
         <p>
-          {viewModel.twiceCount === null
+          {state.twiceCount === null
             ? 'The result of doubling the count will be displayed here.'
-            : viewModel.isProcessing
+            : state.isProcessing
             ? 'Loading...'
-            : `Doubled: ${viewModel.twiceCount}`}
+            : `Doubled: ${state.twiceCount}`}
         </p>
       </div>
     )

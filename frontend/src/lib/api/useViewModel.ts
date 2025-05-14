@@ -1,19 +1,20 @@
-import { useAtom } from 'jotai'
+import { PrimitiveAtom, useAtom } from 'jotai'
 import { createNanoEvents } from 'nanoevents'
 import { useCallback, useEffect, useMemo } from 'react'
 import type { CommandPayload, EventPayload, ViewModelTypeName } from './types'
 import { dispatchCommand, eventHandlerMap, stateHandlerMap, viewModelsFamily } from './viewHandler'
 
 const useViewModel = <
-  TViewModel,
+  TState,
   TCommandPayload extends CommandPayload,
   TEventPayload extends EventPayload
 >(
   type: ViewModelTypeName
 ) => {
-  const [viewModel, setViewModel] = useAtom(viewModelsFamily(type))
-  const notificationEvent = useMemo(
-    () => createNanoEvents<{ notification: (payload: TEventPayload) => void }>(),
+  const [state, setState] = useAtom(viewModelsFamily(type) as PrimitiveAtom<TState | undefined>)
+
+  const eventEmitter = useMemo(
+    () => createNanoEvents<{ event: (payload: TEventPayload) => void }>(),
     []
   )
 
@@ -22,34 +23,27 @@ const useViewModel = <
     [type]
   )
 
-  const onEvent = useCallback(
-    <T extends TEventPayload['type']>(
-      type: T,
-      cb: (payload: Extract<TEventPayload, { type: T }>['payload']) => void
-    ) =>
-      notificationEvent.on('notification', ({ type: eventType, payload: eventPayload }) => {
-        if (eventType !== type) return
-        cb(eventPayload as Extract<TEventPayload, { type: T }>)
-      }),
-    [notificationEvent]
-  )
+  const onEvent = <T extends TEventPayload['type']>(
+    type: T,
+    cb: (payload: Extract<TEventPayload, { type: T }>['payload']) => void
+  ) =>
+    eventEmitter.on('event', ({ type: eventType, payload: eventPayload }) => {
+      if (eventType !== type) return
+      cb(eventPayload as Extract<TEventPayload, { type: T }>)
+    })
 
   useEffect(() => {
     if (!stateHandlerMap.has(type)) {
-      console.log(`state set: ${type}`)
-      stateHandlerMap.set(type, setViewModel)
+      stateHandlerMap.set(type, (x) => setState(x as TState))
       dispatch({ type: 'init' } as TCommandPayload)
     }
 
     if (!eventHandlerMap.has(type)) {
-      console.log(`event set: ${type}`)
-      eventHandlerMap.set(type, (payload) =>
-        notificationEvent.emit('notification', payload as TEventPayload)
-      )
+      eventHandlerMap.set(type, (payload) => eventEmitter.emit('event', payload as TEventPayload))
     }
-  }, [dispatch, notificationEvent, setViewModel, type])
+  }, [dispatch, eventEmitter, setState, type])
 
-  return { viewModel: viewModel as TViewModel, dispatch, onEvent }
+  return { state, dispatch, onEvent }
 }
 
 export default useViewModel

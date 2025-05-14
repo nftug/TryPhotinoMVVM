@@ -7,7 +7,7 @@ export const useErrorHandler = () => {
 
   useEffect(() => {
     const unsubscribe = onEvent('error', (payload) => {
-      alert(payload.message)
+      console.error(payload.message)
     })
     return () => unsubscribe()
   }, [onEvent])
@@ -15,5 +15,5 @@ export const useErrorHandler = () => {
 
 export type ErrorEventPayload = {
   type: 'error'
-  payload: { message: string }
+  payload: { type: ViewModelTypeName; message: string }
 }

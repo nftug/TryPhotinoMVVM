@@ -10,10 +10,10 @@ public class ViewModelMessageDispatcher(PhotinoWindow window)
     public void Dispatch<TPayload>(
         ViewModelType type,
         TPayload payload,
-        JsonTypeInfo<ViewModelMessage<TPayload>> jsonTypeInfo
+        JsonTypeInfo<StateMessage<TPayload>> jsonTypeInfo
     )
     {
-        var message = new ViewModelMessage<TPayload>(type, payload);
+        var message = new StateMessage<TPayload>(type, payload);
         var json = JsonSerializer.Serialize(message, jsonTypeInfo);
         window.SendWebMessage(json);
     }

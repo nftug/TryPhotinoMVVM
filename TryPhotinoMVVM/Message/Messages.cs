@@ -2,7 +2,7 @@ using System.Text.Json;
 
 namespace TryPhotinoMVVM.Message;
 
-public record ViewModelMessage<TPayload>(ViewModelType Type, TPayload Payload);
+public record StateMessage<TPayload>(ViewModelType Type, TPayload Payload);
 
 public record EventMessage<TPayload>(string Type, EventMessagePayload<TPayload> Payload);
 

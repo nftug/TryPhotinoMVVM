@@ -1,21 +1,8 @@
 import { ViewModelTypeName } from '@/lib/api/types'
 import useViewModel from '@/lib/api/useViewModel'
-import { useEffect } from 'react'
 
-export const useCounterViewModel = () => {
-  const { onEvent, ...rest } = useViewModel<CounterViewModel, CounterCommand, CounterEvent>(
-    'Counter' as ViewModelTypeName
-  )
-
-  useEffect(() => {
-    const unsubscribeFizzBuzz = onEvent('fizzBuzz', (payload) => {
-      alert(payload)
-    })
-    return () => unsubscribeFizzBuzz()
-  }, [onEvent])
-
-  return { ...rest }
-}
+export const useCounterViewModel = () =>
+  useViewModel<CounterViewModel, CounterCommand, CounterEvent>('Counter' as ViewModelTypeName)
 
 export type CounterViewModel = {
   count: number

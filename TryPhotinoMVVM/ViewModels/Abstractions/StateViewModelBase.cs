@@ -8,23 +8,26 @@ using TryPhotinoMVVM.Message;
 
 namespace TryPhotinoMVVM.ViewModels.Abstractions;
 
-public abstract class StateViewModelBase<TPayload, TAction> : IMessageHandler, IDisposable
+public abstract class StateViewModelBase<TState, TAction> : IMessageHandler, IDisposable
     where TAction : struct, Enum
 {
     private bool _disposed;
     protected CompositeDisposable Disposable { get; } = new();
 
-    public ReactivePropertySlim<TPayload> State { get; }
+    private readonly ViewModelMessageDispatcher _dispatcher;
 
-    protected StateViewModelBase(ViewModelMessageDispatcher dispatcher, TPayload defaultPayload)
+    public ReactivePropertySlim<TState> State { get; }
+
+    protected StateViewModelBase(ViewModelMessageDispatcher dispatcher, TState defaultPayload)
     {
-        State = new ReactivePropertySlim<TPayload>(defaultPayload).AddTo(Disposable);
+        _dispatcher = dispatcher;
+        State = new ReactivePropertySlim<TState>(defaultPayload).AddTo(Disposable);
         State.Subscribe(v => dispatcher.Dispatch(ViewModelType, v, StateJsonTypeInfo)).AddTo(Disposable);
     }
 
     public abstract ViewModelType ViewModelType { get; }
 
-    protected abstract JsonTypeInfo<ViewModelMessage<TPayload>> StateJsonTypeInfo { get; }
+    protected abstract JsonTypeInfo<StateMessage<TState>> StateJsonTypeInfo { get; }
 
     public bool CanHandle(ViewModelType type) => type == ViewModelType;
 
@@ -37,6 +40,9 @@ public abstract class StateViewModelBase<TPayload, TAction> : IMessageHandler, I
 
         return HandleActionAsync(action, payload.Payload);
     }
+
+    protected void DispatchEvent<T>(EventMessagePayload<T> payload, JsonTypeInfo<EventMessage<T>> jsonTypeInfo)
+        => _dispatcher.DispatchEvent(ViewModelType, payload, jsonTypeInfo);
 
     protected abstract ValueTask HandleActionAsync(TAction action, JsonElement? payload);
 

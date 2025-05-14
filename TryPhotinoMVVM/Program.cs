@@ -4,6 +4,7 @@ using Photino.NET;
 using TryPhotinoMVVM.Constants;
 using TryPhotinoMVVM.Extensions;
 using TryPhotinoMVVM.Message;
+using TryPhotinoMVVM.Models;
 using TryPhotinoMVVM.Utils;
 using TryPhotinoMVVM.ViewModels;
 
@@ -48,9 +49,16 @@ public class Program
                 {
                     logger.LogError(ex.ToString());
 
+                    ErrorMessage payload =
+                        ex is ViewModelException vmEx
+                        ? new(vmEx.Type, vmEx.Message) : new(null, ex.Message);
+
                     var dispatcher = serviceProvider.GetRequiredService<ViewModelMessageDispatcher>();
                     dispatcher.DispatchEvent(
-                       ViewModelType.Error, new("error", new(ex.Message)), JsonContext.Default.EventMessageErrorMessage);
+                       ViewModelType.Error, new ErrorEvent(payload), JsonContext.Default.EventMessageErrorMessage);
+
+                    window.ShowMessage(
+                        $"Error from {payload.Type}", ex.Message, PhotinoDialogButtons.Ok, PhotinoDialogIcon.Error);
                 }
             });
 

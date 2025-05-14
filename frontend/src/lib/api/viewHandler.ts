@@ -1,4 +1,4 @@
-import { atom } from 'jotai'
+import { atom, PrimitiveAtom } from 'jotai'
 import { atomFamily } from 'jotai/utils'
 import { CommandMessage, CommandPayload, ViewModelMessage, ViewModelTypeName } from './types'
 
@@ -8,7 +8,7 @@ export const stateHandlerMap = new Map<ViewModelTypeName, MessageHandler>()
 
 export const eventHandlerMap = new Map<ViewModelTypeName, MessageHandler>()
 
-export const viewModelsFamily = atomFamily(() => atom<unknown>())
+export const viewModelsFamily = atomFamily<ViewModelTypeName, PrimitiveAtom<unknown>>(() => atom())
 
 export const initializeViewHandler = () => {
   window.external.receiveMessage((json) => {
