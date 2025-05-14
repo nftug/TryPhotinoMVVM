@@ -2,12 +2,16 @@ using System.Text.Json;
 
 namespace TryPhotinoMVVM.Message;
 
-public record StateMessage<TPayload>(ViewModelType Type, TPayload Payload);
+public record EventMessage<TPayload>(ViewModelType Type, EventPayload<TPayload> Payload);
 
-public record EventMessage<TPayload>(string Type, EventMessagePayload<TPayload> Payload);
+public record EventPayload<TPayload>(string Type, TPayload? Payload);
 
-public record EventMessagePayload<TPayload>(string Type, TPayload? Payload);
+public record EventEmptyPayload(string Type)
+    : EventPayload<EventEmptyPayload.DummyPayload>(Type, new())
+{
+    public record DummyPayload;
+}
 
-public record CommandMessage(ViewModelType Type, CommandMessagePayload Payload);
+public record CommandMessage(ViewModelType Type, CommandPayload Payload);
 
-public record CommandMessagePayload(string Type, JsonElement? Payload);
+public record CommandPayload(string Type, JsonElement? Payload);

@@ -1,29 +1,17 @@
-import { atom, PrimitiveAtom } from 'jotai'
-import { atomFamily } from 'jotai/utils'
-import { CommandMessage, CommandPayload, ViewModelMessage, ViewModelTypeName } from './types'
+import { CommandMessage, CommandPayload, EventMessage, ViewModelTypeName } from './types'
 
 type MessageHandler = (payload: unknown) => void
 
-export const stateHandlerMap = new Map<ViewModelTypeName, MessageHandler>()
-
 export const eventHandlerMap = new Map<ViewModelTypeName, MessageHandler>()
-
-export const viewModelsFamily = atomFamily<ViewModelTypeName, PrimitiveAtom<unknown>>(() => atom())
 
 export const initializeViewHandler = () => {
   window.external.receiveMessage((json) => {
     try {
-      const msg: ViewModelMessage<unknown> = JSON.parse(json)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const msg: EventMessage<any> = JSON.parse(json)
       const { type, payload } = msg
-
-      if (type.endsWith('_Event')) {
-        const key = type.replace(/_Event$/, '') as ViewModelTypeName
-        const eventHandler = eventHandlerMap.get(key)
-        if (eventHandler) eventHandler(payload)
-      } else {
-        const stateHandler = stateHandlerMap.get(type as ViewModelTypeName)
-        if (stateHandler) stateHandler(payload)
-      }
+      const eventHandler = eventHandlerMap.get(type)
+      if (eventHandler) eventHandler(payload)
     } catch {
       console.warn('Invalid message from Photino:', json)
     }

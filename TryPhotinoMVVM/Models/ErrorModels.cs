@@ -15,4 +15,4 @@ public class ViewModelException : Exception
 
 public record ErrorMessage(ViewModelType? Type, string Message);
 
-public record ErrorEvent(ErrorMessage Payload) : EventMessagePayload<ErrorMessage>("error", Payload);
+public record ErrorEvent(ErrorMessage Payload) : EventPayload<ErrorMessage>("error", Payload);

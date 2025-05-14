@@ -4,6 +4,9 @@ using TryPhotinoMVVM.Message;
 namespace TryPhotinoMVVM.Models;
 
 #region State
+public record CounterStateEvent(CounterState Payload)
+    : EventPayload<CounterState>("state", Payload);
+
 public record CounterState(long Count, long? TwiceCount, bool IsProcessing)
 {
     public bool CanDecrement => Count > 0;
@@ -12,7 +15,7 @@ public record CounterState(long Count, long? TwiceCount, bool IsProcessing)
 
 #region Events
 public record CounterFizzBuzzEvent(FizzBuzz Payload)
-    : EventMessagePayload<FizzBuzz>("fizzBuzz", Payload)
+    : EventPayload<FizzBuzz>("fizzBuzz", Payload)
 {
     public static CounterFizzBuzzEvent? Create(long count)
     {
@@ -49,9 +52,9 @@ public record CounterSetActionPayload(long Value);
 #endregion
 
 #region JsonContext
-[JsonSerializable(typeof(StateMessage<CounterState>))]
-[JsonSerializable(typeof(CounterSetActionPayload))]
+[JsonSerializable(typeof(EventMessage<CounterState>))]
 [JsonSerializable(typeof(EventMessage<FizzBuzz>))]
+[JsonSerializable(typeof(CounterSetActionPayload))]
 [JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
 public partial class CounterJsonContext : JsonSerializerContext;
 #endregion

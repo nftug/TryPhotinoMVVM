@@ -21,7 +21,7 @@ public class Program
 
         var serviceProvider = new ServiceCollection()
             .AddSingleton(window)
-            .AddSingleton<ViewModelMessageDispatcher>()
+            .AddSingleton<ViewModelEventDispatcher>()
             .AddSingleton<CommandMessageDispatcher>(sp =>
                 new CommandMessageDispatcher()
                     .Register(sp.GetRequiredService<CounterViewModel>()))
@@ -53,8 +53,8 @@ public class Program
                         ex is ViewModelException vmEx
                         ? new(vmEx.Type, vmEx.Message) : new(null, ex.Message);
 
-                    var dispatcher = serviceProvider.GetRequiredService<ViewModelMessageDispatcher>();
-                    dispatcher.DispatchEvent(
+                    var dispatcher = serviceProvider.GetRequiredService<ViewModelEventDispatcher>();
+                    dispatcher.Dispatch(
                        ViewModelType.Error, new ErrorEvent(payload), JsonContext.Default.EventMessageErrorMessage);
 
                     window.ShowMessage(

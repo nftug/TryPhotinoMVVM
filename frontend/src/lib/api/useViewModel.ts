@@ -1,18 +1,11 @@
-import { PrimitiveAtom, useAtom } from 'jotai'
 import { createNanoEvents } from 'nanoevents'
-import { useCallback, useEffect, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { CommandPayload, EventPayload, ViewModelTypeName } from './types'
-import { dispatchCommand, eventHandlerMap, stateHandlerMap, viewModelsFamily } from './viewHandler'
+import { dispatchCommand, eventHandlerMap } from './viewHandler'
 
-const useViewModel = <
-  TState,
-  TCommandPayload extends CommandPayload,
-  TEventPayload extends EventPayload
->(
+const useViewModel = <TCommandPayload extends CommandPayload, TEventPayload extends EventPayload>(
   type: ViewModelTypeName
 ) => {
-  const [state, setState] = useAtom(viewModelsFamily(type) as PrimitiveAtom<TState | undefined>)
-
   const eventEmitter = useMemo(
     () => createNanoEvents<{ event: (payload: TEventPayload) => void }>(),
     []
@@ -32,18 +25,25 @@ const useViewModel = <
       cb(eventPayload as Extract<TEventPayload, { type: T }>)
     })
 
-  useEffect(() => {
-    if (!stateHandlerMap.has(type)) {
-      stateHandlerMap.set(type, (x) => setState(x as TState))
-      dispatch({ type: 'init' } as TCommandPayload)
-    }
+  const useEventValue = <T extends TEventPayload['type']>(
+    eventType: T
+  ): Extract<TEventPayload, { type: T }>['payload'] | undefined => {
+    const [value, setValue] = useState<Extract<TEventPayload, { type: T }>['payload']>()
+    useEffect(() => {
+      const unsubscribe = onEvent(eventType, setValue)
+      return () => unsubscribe()
+    }, [eventType])
+    return value
+  }
 
+  useEffect(() => {
     if (!eventHandlerMap.has(type)) {
       eventHandlerMap.set(type, (payload) => eventEmitter.emit('event', payload as TEventPayload))
+      dispatch({ type: 'init' } as TCommandPayload)
     }
-  }, [dispatch, eventEmitter, setState, type])
+  }, [dispatch, eventEmitter, type])
 
-  return { state, dispatch, onEvent }
+  return { dispatch, onEvent, useEventValue }
 }
 
 export default useViewModel

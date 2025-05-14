@@ -1,6 +1,11 @@
-export type ViewModelMessage<T> = {
+export type EventMessage<T extends EventPayload> = {
   type: ViewModelTypeName
   payload?: T
+}
+
+export type EventPayload = {
+  type: string
+  payload?: unknown
 }
 
 export type CommandMessage<T extends CommandPayload> = {
@@ -9,16 +14,6 @@ export type CommandMessage<T extends CommandPayload> = {
 }
 
 export type CommandPayload = {
-  type: string
-  payload?: unknown
-}
-
-export type EventMessage<T extends EventPayload> = {
-  type: string
-  payload?: T
-}
-
-export type EventPayload = {
   type: string
   payload?: unknown
 }
