@@ -6,10 +6,9 @@ const CounterCard = () => {
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    const unsubscribeFizzBuzz = onEvent('fizzBuzz', (payload) => {
+    return onEvent('fizzBuzz', (payload) => {
       alert(payload)
     })
-    return () => unsubscribeFizzBuzz()
   }, [onEvent])
 
   useEffect(() => {

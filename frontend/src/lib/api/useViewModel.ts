@@ -1,7 +1,7 @@
 import { createNanoEvents } from 'nanoevents'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { CommandPayload, EventPayload, ViewModelTypeName } from './types'
-import { dispatchCommand, eventHandlerMap } from './viewHandler'
+import { dispatchCommand, eventHandlerSetMap } from './viewHandler'
 
 const useViewModel = <TCommandPayload extends CommandPayload, TEventPayload extends EventPayload>(
   type: ViewModelTypeName
@@ -29,17 +29,22 @@ const useViewModel = <TCommandPayload extends CommandPayload, TEventPayload exte
     eventType: T
   ): Extract<TEventPayload, { type: T }>['payload'] | undefined => {
     const [value, setValue] = useState<Extract<TEventPayload, { type: T }>['payload']>()
-    useEffect(() => {
-      const unsubscribe = onEvent(eventType, setValue)
-      return () => unsubscribe()
-    }, [eventType])
+    useEffect(() => onEvent(eventType, setValue), [eventType])
     return value
   }
 
   useEffect(() => {
-    if (!eventHandlerMap.has(type)) {
-      eventHandlerMap.set(type, (payload) => eventEmitter.emit('event', payload as TEventPayload))
-      dispatch({ type: 'init' } as TCommandPayload)
+    const emitEvent = (payload: unknown) => eventEmitter.emit('event', payload as TEventPayload)
+
+    const handlerSet = eventHandlerSetMap.get(type) ?? new Set()
+    handlerSet.add(emitEvent)
+    eventHandlerSetMap.set(type, handlerSet)
+
+    dispatch({ type: 'init' } as TCommandPayload)
+
+    return () => {
+      handlerSet.delete(emitEvent)
+      eventHandlerSetMap.set(type, handlerSet)
     }
   }, [dispatch, eventEmitter, type])
 

@@ -1,3 +1,5 @@
+using System.Reflection;
+
 namespace TryPhotinoMVVM.Constants;
 
 public static class EnvironmentConstants
@@ -13,4 +15,6 @@ public static class EnvironmentConstants
 
 #endif
 
+    public static readonly string AppName =
+        Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyTitleAttribute>()?.Title ?? "";
 }

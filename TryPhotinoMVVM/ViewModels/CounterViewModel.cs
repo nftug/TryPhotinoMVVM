@@ -3,6 +3,7 @@ using System.Text.Json.Serialization.Metadata;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using Reactive.Bindings.TinyLinq;
+using TryPhotinoMVVM.Constants;
 using TryPhotinoMVVM.Extensions;
 using TryPhotinoMVVM.Message;
 using TryPhotinoMVVM.Models;
@@ -22,7 +23,7 @@ public class CounterViewModel : ViewModelBase<CounterActionType>
 
         _state
             .Select(s => new CounterStateEvent(s))
-            .Subscribe(e => Dispatch(e, CounterJsonContext.Default.EventMessageCounterState))
+            .Subscribe(e => Dispatch(e, JsonContext.Default.EventMessageCounterState))
             .AddTo(Disposable);
     }
 
@@ -37,7 +38,7 @@ public class CounterViewModel : ViewModelBase<CounterActionType>
 
     private ValueTask SetCountAsync(JsonElement payload)
     {
-        var actionPayload = payload.ParsePayload(CounterJsonContext.Default.CounterSetActionPayload);
+        var actionPayload = payload.ParsePayload(JsonContext.Default.CounterSetActionPayload);
         if (actionPayload is not { }) return ValueTask.CompletedTask;
         return ChangeCountAsync(actionPayload.Value);
     }
@@ -56,7 +57,7 @@ public class CounterViewModel : ViewModelBase<CounterActionType>
         _state.Value = _state.Value with { TwiceCount = value * 2, IsProcessing = false };
 
         if (CounterFizzBuzzEvent.Create(_state.Value.Count) is { } fizzBuzzEvent)
-            Dispatch(fizzBuzzEvent, CounterJsonContext.Default.EventMessageFizzBuzz);
+            Dispatch(fizzBuzzEvent, JsonContext.Default.EventMessageFizzBuzz);
     }
 
     protected override ValueTask HandleInitAsync()

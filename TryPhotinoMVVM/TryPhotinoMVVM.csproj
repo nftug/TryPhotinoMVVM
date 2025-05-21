@@ -19,8 +19,12 @@
         <DebugSymbols>false</DebugSymbols>
         <DebugType>none</DebugType>
 
+        <Version>1.0.0.0</Version>
         <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+        <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+        <AssemblyName>TryPhotinoMVVM</AssemblyName>
+        <AssemblyTitle>Try Photino MVVM</AssemblyTitle>
+
         <SourceRevisionId>build$([System.DateTime]::UtcNow.ToString("yyyyMMddHHmmss"))</SourceRevisionId>
     </PropertyGroup>
 

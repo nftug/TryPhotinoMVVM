@@ -50,11 +50,3 @@ public enum CounterActionType
 
 public record CounterSetActionPayload(long Value);
 #endregion
-
-#region JsonContext
-[JsonSerializable(typeof(EventMessage<CounterState>))]
-[JsonSerializable(typeof(EventMessage<FizzBuzz>))]
-[JsonSerializable(typeof(CounterSetActionPayload))]
-[JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
-public partial class CounterJsonContext : JsonSerializerContext;
-#endregion

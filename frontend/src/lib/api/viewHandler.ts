@@ -2,7 +2,7 @@ import { CommandMessage, CommandPayload, EventMessage, ViewModelTypeName } from 
 
 type MessageHandler = (payload: unknown) => void
 
-export const eventHandlerMap = new Map<ViewModelTypeName, MessageHandler>()
+export const eventHandlerSetMap = new Map<ViewModelTypeName, Set<MessageHandler>>()
 
 export const initializeViewHandler = () => {
   window.external.receiveMessage((json) => {
@@ -10,8 +10,8 @@ export const initializeViewHandler = () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const msg: EventMessage<any> = JSON.parse(json)
       const { type, payload } = msg
-      const eventHandler = eventHandlerMap.get(type)
-      if (eventHandler) eventHandler(payload)
+      const eventHandlerSet = eventHandlerSetMap.get(type)
+      eventHandlerSet?.forEach((handler) => handler(payload))
     } catch {
       console.warn('Invalid message from Photino:', json)
     }
