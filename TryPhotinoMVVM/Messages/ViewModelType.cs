@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace TryPhotinoMVVM.Message;
+namespace TryPhotinoMVVM.Messages;
 
 [JsonConverter(typeof(JsonStringEnumConverter<ViewModelType>))]
 public enum ViewModelType

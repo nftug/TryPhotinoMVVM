@@ -1,0 +1,75 @@
+using System.Reactive.Linq;
+using Reactive.Bindings;
+using TryPhotinoMVVM.Domain.Counter;
+using TryPhotinoMVVM.Domain.Enums;
+using TryPhotinoMVVM.Messages;
+
+namespace TryPhotinoMVVM.Models;
+
+public class CounterModel
+{
+    private readonly ReactivePropertySlim<long> _count = new();
+    private readonly ReactivePropertySlim<long?> _twiceCount = new();
+    private readonly ReactivePropertySlim<bool> _isProcessing = new();
+
+    public ReadOnlyReactivePropertySlim<CounterState?> CounterState { get; }
+    public ReactiveCommandSlim<FizzBuzz> FizzBuzzReceivedCommand { get; } = new();
+
+    public CounterModel()
+    {
+        CounterState = _count
+            .CombineLatest(_twiceCount, _isProcessing)
+            .Select(x => new CounterState(x.First, x.Second, x.Third))
+            .ToReadOnlyReactivePropertySlim(mode: ReactivePropertyMode.RaiseLatestValueOnSubscribe);
+    }
+
+    public void ForceNotify()
+    {
+        _count.ForceNotify();
+        _twiceCount.ForceNotify();
+        _isProcessing.ForceNotify();
+    }
+
+    public async Task ChangeCountAsync(long value)
+    {
+        if (_isProcessing.Value || _count.Value == value) return;
+        if (value < 0)
+        {
+            _count.ForceNotify();
+            return;
+        }
+
+        _count.Value = value;
+        _twiceCount.Value = null;
+        _isProcessing.Value = true;
+
+        var twiceCountTask = GetTwiceCountAsync(value);
+        var fizzBuzzTask = GetFizzBuzzAsync(value);
+        await Task.WhenAll(twiceCountTask, fizzBuzzTask);
+
+        _twiceCount.Value = twiceCountTask.Result;
+        if (fizzBuzzTask.Result is { } fizzBuzz)
+            FizzBuzzReceivedCommand.Execute(fizzBuzz);
+
+        _isProcessing.Value = false;
+    }
+
+    private async Task<long> GetTwiceCountAsync(long count)
+    {
+        await Task.Delay(200);
+        return count * 2;
+    }
+
+    private async Task<FizzBuzz?> GetFizzBuzzAsync(long count)
+    {
+        await Task.Delay(500);
+        return count switch
+        {
+            0 => null,
+            var x when x % 15 == 0 => FizzBuzz.FizzBuzz,
+            var x when x % 5 == 0 => FizzBuzz.Buzz,
+            var x when x % 3 == 0 => FizzBuzz.Fizz,
+            _ => null,
+        };
+    }
+}

@@ -12,4 +12,20 @@ public static class JsonElementExtensions
 
         return element.Deserialize<T>(jsonTypeInfo);
     }
+
+    public static ValueTask HandlePayloadAsync<T>(
+        this JsonElement payload, JsonTypeInfo<T> jsonTypeInfo, Func<T, ValueTask> callback)
+    {
+        var parsed = payload.ParsePayload(jsonTypeInfo);
+        return parsed != null ? callback(parsed) : ValueTask.CompletedTask;
+    }
+
+    public static ValueTask HandlePayloadSync<T>(
+        this JsonElement payload, JsonTypeInfo<T> jsonTypeInfo, Action<T> callback)
+    {
+        var parsed = payload.ParsePayload(jsonTypeInfo);
+        if (parsed == null) return ValueTask.CompletedTask;
+        callback(parsed);
+        return ValueTask.CompletedTask;
+    }
 }

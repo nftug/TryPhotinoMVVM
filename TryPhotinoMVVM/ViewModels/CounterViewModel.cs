@@ -1,13 +1,13 @@
 using System.Text.Json;
-using System.Text.Json.Serialization.Metadata;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using Reactive.Bindings.TinyLinq;
 using TryPhotinoMVVM.Constants;
 using TryPhotinoMVVM.Extensions;
-using TryPhotinoMVVM.Message;
+using TryPhotinoMVVM.Messages;
 using TryPhotinoMVVM.Models;
 using TryPhotinoMVVM.ViewModels.Abstractions;
+using TryPhotinoMVVM.Views;
 
 namespace TryPhotinoMVVM.ViewModels;
 
@@ -15,54 +15,41 @@ public class CounterViewModel : ViewModelBase<CounterActionType>
 {
     public override ViewModelType ViewModelType => ViewModelType.Counter;
 
-    private readonly ReactivePropertySlim<CounterState> _state;
+    private readonly CounterModel _model;
 
-    public CounterViewModel(ViewModelEventDispatcher dispatcher) : base(dispatcher)
+    public CounterViewModel(
+        ViewModelEventDispatcher dispatcher, CounterModel model) : base(dispatcher)
     {
-        _state = new ReactivePropertySlim<CounterState>(new(0, null, false)).AddTo(Disposable);
+        _model = model;
 
-        _state
-            .Select(s => new CounterStateEvent(s))
-            .Subscribe(e => Dispatch(e, JsonContext.Default.EventMessageCounterState))
-            .AddTo(Disposable);
+        _model.CounterState
+            .Where(v => v != null)
+            .Select(s => new CounterStateEvent(s!.ToDto()))
+            .Subscribe(e => Dispatch(e, JsonContext.Default.EventMessageCounterStateDto));
+
+        _model.FizzBuzzReceivedCommand
+            .Select(v => new CounterFizzBuzzEvent(v))
+            .Subscribe(e => Dispatch(e, JsonContext.Default.EventMessageFizzBuzz));
     }
 
     protected override ValueTask HandleActionAsync(CounterActionType action, JsonElement? payload)
         => (action, payload) switch
         {
-            (CounterActionType.Set, { }) => SetCountAsync(payload.Value),
-            (CounterActionType.Increment, _) => ChangeCountAsync(_state.Value.Count + 1),
-            (CounterActionType.Decrement, _) => ChangeCountAsync(_state.Value.Count - 1),
+            (CounterActionType.Set, { } p) => p.HandlePayloadAsync(
+                JsonContext.Default.CounterSetActionPayload, SetCountAsync),
+            (CounterActionType.Increment, _) => SetCountAsync(new(_model.CounterState.Value!.Count + 1)),
+            (CounterActionType.Decrement, _) => SetCountAsync(new(_model.CounterState.Value!.Count - 1)),
             _ => ValueTask.CompletedTask,
         };
 
-    private ValueTask SetCountAsync(JsonElement payload)
+    private async ValueTask SetCountAsync(CounterSetActionPayload payload)
     {
-        var actionPayload = payload.ParsePayload(JsonContext.Default.CounterSetActionPayload);
-        if (actionPayload is not { }) return ValueTask.CompletedTask;
-        return ChangeCountAsync(actionPayload.Value);
-    }
-
-    private async ValueTask ChangeCountAsync(long value)
-    {
-        if (_state.Value.IsProcessing || _state.Value.Count == value) return;
-        if (value < 0)
-        {
-            _state.ForceNotify();
-            return;
-        }
-
-        _state.Value = _state.Value with { Count = value, IsProcessing = true };
-        await Task.Delay(500);
-        _state.Value = _state.Value with { TwiceCount = value * 2, IsProcessing = false };
-
-        if (CounterFizzBuzzEvent.Create(_state.Value.Count) is { } fizzBuzzEvent)
-            Dispatch(fizzBuzzEvent, JsonContext.Default.EventMessageFizzBuzz);
+        await _model.ChangeCountAsync(payload.Value);
     }
 
     protected override ValueTask HandleInitAsync()
     {
-        _state.ForceNotify();
+        _model.ForceNotify();
         return ValueTask.CompletedTask;
     }
 }

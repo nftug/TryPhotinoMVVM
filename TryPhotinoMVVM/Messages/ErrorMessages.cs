@@ -1,6 +1,4 @@
-using TryPhotinoMVVM.Message;
-
-namespace TryPhotinoMVVM.Models;
+namespace TryPhotinoMVVM.Messages;
 
 public class ViewModelException : Exception
 {

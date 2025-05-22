@@ -1,8 +1,9 @@
 using System.Text.Json;
+using TryPhotinoMVVM.Messages;
 
-namespace TryPhotinoMVVM.Message;
+namespace TryPhotinoMVVM.ViewModels.Abstractions;
 
-public interface IMessageHandler
+public interface IViewModel
 {
     bool CanHandle(ViewModelType type);
     ValueTask HandleAsync(CommandPayload payload);

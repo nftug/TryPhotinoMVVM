@@ -2,8 +2,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Photino.NET;
 using TryPhotinoMVVM.Constants;
-using TryPhotinoMVVM.Message;
-using TryPhotinoMVVM.Models;
+using TryPhotinoMVVM.Messages;
+using TryPhotinoMVVM.Views;
 
 namespace TryPhotinoMVVM.Services;
 

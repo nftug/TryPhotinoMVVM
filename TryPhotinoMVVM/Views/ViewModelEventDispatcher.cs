@@ -1,8 +1,9 @@
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
 using Photino.NET;
+using TryPhotinoMVVM.Messages;
 
-namespace TryPhotinoMVVM.Message;
+namespace TryPhotinoMVVM.Views;
 
 public class ViewModelEventDispatcher(PhotinoWindow window)
 {

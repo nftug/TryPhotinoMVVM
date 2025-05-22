@@ -2,15 +2,15 @@ using Microsoft.Extensions.DependencyInjection;
 using Photino.NET;
 using TryPhotinoMVVM.Constants;
 using TryPhotinoMVVM.Extensions;
-using TryPhotinoMVVM.Message;
 using TryPhotinoMVVM.Utils;
+using TryPhotinoMVVM.Views;
 
 namespace TryPhotinoMVVM.Services;
 
-public class WindowManagerService(
+public class AppWindowManagerService(
     PhotinoWindow window, ErrorHandlerService errorHandler, IServiceProvider serviceProvider)
 {
-    private bool _isClosing = false;
+    private bool? _isClosing;
 
     public void Run()
     {
@@ -63,7 +63,7 @@ public class WindowManagerService(
 
     private bool HandleWindowClosing(object? sender, EventArgs e)
     {
-        if (_isClosing) return false;
+        if (_isClosing is { } isClosing) return !isClosing;
 
         Task.Run(() =>
         {

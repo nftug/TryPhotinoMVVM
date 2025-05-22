@@ -1,6 +1,8 @@
 using System.Text.Json.Serialization;
-using TryPhotinoMVVM.Message;
-using TryPhotinoMVVM.Models;
+using TryPhotinoMVVM.Domain.Counter;
+using TryPhotinoMVVM.Domain.Enums;
+using TryPhotinoMVVM.Dtos;
+using TryPhotinoMVVM.Messages;
 
 namespace TryPhotinoMVVM.Constants;
 
@@ -11,7 +13,7 @@ namespace TryPhotinoMVVM.Constants;
 #endregion
 
 #region Counter
-[JsonSerializable(typeof(EventMessage<CounterState>))]
+[JsonSerializable(typeof(EventMessage<CounterStateDto>))]
 [JsonSerializable(typeof(EventMessage<FizzBuzz>))]
 [JsonSerializable(typeof(CounterSetActionPayload))]
 #endregion

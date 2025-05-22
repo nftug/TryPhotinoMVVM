@@ -1,13 +1,14 @@
 using System.Text.Json;
 using TryPhotinoMVVM.Constants;
+using TryPhotinoMVVM.ViewModels.Abstractions;
 
-namespace TryPhotinoMVVM.Message;
+namespace TryPhotinoMVVM.Views;
 
 public class CommandMessageDispatcher
 {
-    private readonly List<IMessageHandler> _handlers = new();
+    private readonly List<IViewModel> _handlers = new();
 
-    public CommandMessageDispatcher Register(IMessageHandler handler)
+    public CommandMessageDispatcher Register(IViewModel handler)
     {
         _handlers.Add(handler);
         return this;
