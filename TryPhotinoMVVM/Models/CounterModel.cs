@@ -1,5 +1,5 @@
-using System.Reactive.Linq;
 using Reactive.Bindings;
+using Reactive.Bindings.TinyLinq;
 using TryPhotinoMVVM.Domain.Counter;
 using TryPhotinoMVVM.Domain.Enums;
 using TryPhotinoMVVM.Messages;
@@ -18,8 +18,9 @@ public class CounterModel
     public CounterModel()
     {
         CounterState = _count
-            .CombineLatest(_twiceCount, _isProcessing)
-            .Select(x => new CounterState(x.First, x.Second, x.Third))
+            .CombineLatest(_twiceCount, (count, twice) => (count, twice))
+            .CombineLatest(_isProcessing, (x, isProcessing) => (x.count, x.twice, isProcessing))
+            .Select(x => new CounterState(x.count, x.twice, x.isProcessing))
             .ToReadOnlyReactivePropertySlim(mode: ReactivePropertyMode.RaiseLatestValueOnSubscribe);
     }
 
