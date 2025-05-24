@@ -28,8 +28,8 @@ public class CounterViewModel : ViewModelBase<CounterActionType>
             .Subscribe(e => Dispatch(e, JsonContext.Default.EventMessageCounterStateDto));
 
         _model.FizzBuzzReceivedCommand
-            .Select(v => new CounterFizzBuzzEvent(v))
-            .Subscribe(e => Dispatch(e, JsonContext.Default.EventMessageFizzBuzz));
+            .Select(v => new CounterFizzBuzzEvent(new(v)))
+            .Subscribe(e => Dispatch(e, JsonContext.Default.EventMessageCounterFizzBuzzDto));
     }
 
     protected override ValueTask HandleActionAsync(CounterActionType action, JsonElement? payload)

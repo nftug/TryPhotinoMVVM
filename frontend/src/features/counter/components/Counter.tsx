@@ -16,8 +16,8 @@ const Counter = () => {
   }, [state])
 
   useEffect(() => {
-    return onEvent('fizzBuzz', (message) => {
-      enqueueSnackbar(message, { autoHideDuration: 1000 })
+    return onEvent('fizzBuzz', ({ result }) => {
+      enqueueSnackbar(result, { autoHideDuration: 1500 })
     })
   }, [enqueueSnackbar, onEvent])
 

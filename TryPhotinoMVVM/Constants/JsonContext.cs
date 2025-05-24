@@ -14,7 +14,7 @@ namespace TryPhotinoMVVM.Constants;
 
 #region Counter
 [JsonSerializable(typeof(EventMessage<CounterStateDto>))]
-[JsonSerializable(typeof(EventMessage<FizzBuzz>))]
+[JsonSerializable(typeof(EventMessage<CounterFizzBuzzDto>))]
 [JsonSerializable(typeof(CounterSetActionPayload))]
 #endregion
 

@@ -11,8 +11,8 @@ public record CounterStateEvent(CounterStateDto Payload)
 #endregion
 
 #region Events
-public record CounterFizzBuzzEvent(FizzBuzz Payload)
-    : EventPayload<FizzBuzz>("fizzBuzz", Payload);
+public record CounterFizzBuzzEvent(CounterFizzBuzzDto Payload)
+    : EventPayload<CounterFizzBuzzDto>("fizzBuzz", Payload);
 #endregion
 
 #region Actions

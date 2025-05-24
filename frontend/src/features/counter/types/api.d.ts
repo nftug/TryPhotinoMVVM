@@ -5,6 +5,10 @@ export type CounterState = {
   canDecrement: boolean
 }
 
+export type CounterFizzBuzz = {
+  result: 'Fizz' | 'Buzz' | 'FizzBuzz'
+}
+
 export type CounterCommand =
   | { type: 'increment' }
   | { type: 'decrement' }
@@ -12,4 +16,4 @@ export type CounterCommand =
 
 export type CounterEvent =
   | { type: 'state'; payload: CounterState }
-  | { type: 'fizzBuzz'; payload: 'Fizz' | 'Buzz' | 'FizzBuzz' }
+  | { type: 'fizzBuzz'; payload: CounterFizzBuzz }
