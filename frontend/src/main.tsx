@@ -1,8 +1,7 @@
-import { initializeViewHandler } from '@/lib/api/viewHandler.ts'
+import { initializeViewHandler } from '@/lib/api/stores/viewHandler.ts'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
-import './index.css'
 
 initializeViewHandler()
 

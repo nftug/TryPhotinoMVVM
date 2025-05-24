@@ -4,17 +4,21 @@ set -e
 case "$1" in
   run)
     echo "🟢 Starting frontend and app..."
-    npm install --prefix frontend
-    npm run dev --prefix frontend &
+    cd frontend
+    pnpm install
+    pnpm run dev &
     FRONTEND_PID=$!
+    cd ..
 
     dotnet watch --project TryPhotinoMVVM/TryPhotinoMVVM.csproj run
     kill $FRONTEND_PID
     ;;
   publish)
     echo "🌱 Building frontend..."
-    npm install --prefix frontend
-    npm run build --prefix frontend
+    cd frontend
+    pnpm install
+    pnpm run build
+    cd ..
 
     echo "🧹 Cleaning wwwroot..."
     rm -rf TryPhotinoMVVM/wwwroot

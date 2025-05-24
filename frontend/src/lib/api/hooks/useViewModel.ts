@@ -1,7 +1,7 @@
 import { createNanoEvents } from 'nanoevents'
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import type { CommandPayload, EventPayload, ViewModelTypeName } from './types'
-import { dispatchCommand, eventHandlerSetMap } from './viewHandler'
+import { useCallback, useEffect, useMemo } from 'react'
+import { dispatchCommand, eventHandlerSetMap } from '../stores/viewHandler'
+import type { CommandPayload, EventPayload, ViewModelTypeName } from '../types/api'
 
 const useViewModel = <TCommandPayload extends CommandPayload, TEventPayload extends EventPayload>(
   type: ViewModelTypeName
@@ -25,14 +25,6 @@ const useViewModel = <TCommandPayload extends CommandPayload, TEventPayload exte
       cb(eventPayload as Extract<TEventPayload, { type: T }>)
     })
 
-  const useEventValue = <T extends TEventPayload['type']>(
-    eventType: T
-  ): Extract<TEventPayload, { type: T }>['payload'] | undefined => {
-    const [value, setValue] = useState<Extract<TEventPayload, { type: T }>['payload']>()
-    useEffect(() => onEvent(eventType, setValue), [eventType])
-    return value
-  }
-
   useEffect(() => {
     const emitEvent = (payload: unknown) => eventEmitter.emit('event', payload as TEventPayload)
 
@@ -48,7 +40,7 @@ const useViewModel = <TCommandPayload extends CommandPayload, TEventPayload exte
     }
   }, [dispatch, eventEmitter, type])
 
-  return { dispatch, onEvent, useEventValue }
+  return { dispatch, onEvent }
 }
 
 export default useViewModel

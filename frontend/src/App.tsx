@@ -1,28 +1,40 @@
-import reactLogo from '@/assets/react.svg'
-import CounterCard from '@/features/counter/components/CounterCard'
-import './App.css'
-import { useErrorHandler } from './lib/api/useErrorHandler'
-import viteLogo from '/vite.svg'
+import TheDrawer from '@/lib/layout/components/TheDrawer'
+import TheHeader from '@/lib/layout/components/TheHeader'
+import AboutPage from '@/pages/AboutPage'
+import IndexPage from '@/pages/IndexPage'
+import SettingsPage from '@/pages/SettingsPage'
+import { Box, createTheme, CssBaseline, ThemeProvider, Toolbar } from '@mui/material'
+import { SnackbarProvider } from 'notistack'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { HeaderProvider } from './lib/layout/components/HeaderContext'
 
-function App() {
-  useErrorHandler()
+const theme = createTheme({ colorSchemes: { dark: true } })
 
+const App = () => {
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React + Photino.NET</h1>
+    <BrowserRouter>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <SnackbarProvider
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+          preventDuplicate
+        >
+          <HeaderProvider>
+            <TheHeader />
+            <TheDrawer />
+          </HeaderProvider>
 
-      <CounterCard />
-
-      <p className="read-the-docs">The count values come from the C# side.</p>
-    </>
+          <Box component="main">
+            <Toolbar />
+            <Routes>
+              <Route index element={<IndexPage />} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/settings" element={<SettingsPage />} />
+            </Routes>
+          </Box>
+        </SnackbarProvider>
+      </ThemeProvider>
+    </BrowserRouter>
   )
 }
 

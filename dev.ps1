@@ -7,7 +7,7 @@ switch ($mode) {
         Write-Host "🟢 Starting frontend and app..."
 
         Push-Location ./frontend
-        npm install --prefix frontend
+        pnpm install --prefix frontend
         $frontend = Start-Process powershell -ArgumentList "-Command", { npm run dev } -PassThru
         Pop-Location
 
@@ -22,8 +22,8 @@ switch ($mode) {
         Write-Host "🌱 Building frontend..."
 
         Push-Location ./frontend
-        npm install --prefix frontend
-        npm run build --prefix frontend
+        pnpm install
+        pnpm run build
         Pop-Location
 
         Write-Host "🧹 Cleaning wwwroot..."

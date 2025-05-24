@@ -1,4 +1,4 @@
-import { CommandMessage, CommandPayload, EventMessage, ViewModelTypeName } from './types'
+import { CommandMessage, CommandPayload, EventMessage, ViewModelTypeName } from '../types/api'
 
 type MessageHandler = (payload: unknown) => void
 

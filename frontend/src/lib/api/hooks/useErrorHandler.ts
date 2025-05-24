@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { ViewModelTypeName } from './types'
+import { ViewModelTypeName } from '../types/api'
 import useViewModel from './useViewModel'
 
 export const useErrorHandler = () => {

@@ -18,4 +18,4 @@ export type CommandPayload = {
   payload?: unknown
 }
 
-export type ViewModelTypeName = string & { __brand: 'ViewModelTypeName' }
+export type ViewModelTypeName = 'Counter' | 'Error'
