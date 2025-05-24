@@ -1,3 +1,4 @@
+using System.IO.Compression;
 using System.Reflection;
 using System.Text;
 using Microsoft.Extensions.FileProviders;
@@ -17,17 +18,32 @@ public static class AppSchemeHandler
         var fileInfo = FileProvider.GetFileInfo(path);
         if (!fileInfo.Exists)
         {
-            if (path == "/index.html")
+            var gzPath = path + ".gz";
+            var gzFileInfo = FileProvider.GetFileInfo(gzPath);
+            if (gzFileInfo.Exists)
             {
-                contentType = "text/plain";
-                return new MemoryStream(Encoding.UTF8.GetBytes("404 Not Found"));
+                path = gzPath;
+                fileInfo = gzFileInfo;
             }
+            else
+            {
+                if (path == "/index.html")
+                {
+                    contentType = "text/plain";
+                    return new MemoryStream(Encoding.UTF8.GetBytes("404 Not Found"));
+                }
 
-            string indexUrl = $"{uri.Scheme}://{uri.Host}/index.html";
-            return Handle(sender, scheme, indexUrl, out contentType);
+                string indexUrl = $"{uri.Scheme}://{uri.Host}/index.html";
+                return Handle(sender, scheme, indexUrl, out contentType);
+            }
         }
 
-        contentType = Path.GetExtension(path).ToLower() switch
+        var extension = Path.GetExtension(path).ToLower();
+        var actualExtension = extension == ".gz"
+            ? Path.GetExtension(Path.GetFileNameWithoutExtension(path)).ToLower()
+            : extension;
+
+        contentType = actualExtension switch
         {
             ".html" => "text/html",
             ".js" => "application/javascript",
@@ -39,6 +55,7 @@ public static class AppSchemeHandler
             _ => "application/octet-stream"
         };
 
-        return fileInfo.CreateReadStream();
+        var stream = fileInfo.CreateReadStream();
+        return extension == ".gz" ? new GZipStream(stream, CompressionMode.Decompress) : stream;
     }
 }
