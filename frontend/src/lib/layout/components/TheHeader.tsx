@@ -13,7 +13,7 @@ const TheHeader = () => {
   }
 
   return (
-    <AppBar>
+    <AppBar position="sticky">
       <Toolbar>
         <IconButton
           size="large"

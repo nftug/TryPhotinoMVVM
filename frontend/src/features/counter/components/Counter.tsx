@@ -59,12 +59,9 @@ const Counter = () => {
       </Box>
 
       <Typography variant="body1" sx={{ mt: 2 }}>
-        {match({ state })
-          .with({ state: { isProcessing: true } }, () => 'Loading...')
-          .with(
-            { state: { twiceCount: P.nonNullable.select() } },
-            (doubled) => `Doubled: ${doubled}`
-          )
+        {match(state)
+          .with({ isProcessing: true }, () => 'Loading...')
+          .with({ twiceCount: P.nonNullable.select() }, (doubled) => `Doubled: ${doubled}`)
           .otherwise(() => 'The result of doubling the count will be displayed here.')}
       </Typography>
     </Stack>

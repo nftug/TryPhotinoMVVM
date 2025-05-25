@@ -14,7 +14,7 @@ const SettingsPage: React.FC = () => {
   const { mode, setMode } = useColorScheme()
 
   return (
-    <Container sx={{ marginTop: 5 }}>
+    <Container sx={{ mt: 5 }}>
       <Stack spacing={3}>
         <Typography variant="h4">Settings</Typography>
 

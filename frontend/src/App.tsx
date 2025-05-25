@@ -3,10 +3,11 @@ import TheHeader from '@/lib/layout/components/TheHeader'
 import AboutPage from '@/pages/AboutPage'
 import IndexPage from '@/pages/IndexPage'
 import SettingsPage from '@/pages/SettingsPage'
-import { Box, createTheme, CssBaseline, ThemeProvider, Toolbar } from '@mui/material'
+import { Box, createTheme, CssBaseline, ThemeProvider } from '@mui/material'
 import { SnackbarProvider } from 'notistack'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { HeaderProvider } from './lib/layout/components/HeaderContext'
+import { mainContainerStyle } from './lib/layout/constants/styles'
 
 const theme = createTheme({ colorSchemes: { dark: true } })
 
@@ -24,8 +25,7 @@ const App = () => {
             <TheDrawer />
           </HeaderProvider>
 
-          <Box component="main">
-            <Toolbar />
+          <Box component="main" sx={mainContainerStyle}>
             <Routes>
               <Route index element={<IndexPage />} />
               <Route path="/about" element={<AboutPage />} />
