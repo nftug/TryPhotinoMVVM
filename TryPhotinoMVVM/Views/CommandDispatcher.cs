@@ -4,11 +4,11 @@ using TryPhotinoMVVM.ViewModels.Abstractions;
 
 namespace TryPhotinoMVVM.Views;
 
-public class CommandMessageDispatcher
+public class CommandDispatcher
 {
     private readonly List<IViewModel> _handlers = new();
 
-    public CommandMessageDispatcher Register(IViewModel handler)
+    public CommandDispatcher Register(IViewModel handler)
     {
         _handlers.Add(handler);
         return this;

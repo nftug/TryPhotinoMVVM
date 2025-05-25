@@ -5,7 +5,7 @@ using TryPhotinoMVVM.Messages;
 
 namespace TryPhotinoMVVM.Views;
 
-public class ViewModelEventDispatcher(PhotinoWindow window)
+public class EventDispatcher(PhotinoWindowInstance _window)
 {
     public void Dispatch<TPayload>(
         ViewModelType type,
@@ -13,6 +13,8 @@ public class ViewModelEventDispatcher(PhotinoWindow window)
         JsonTypeInfo<EventMessage<TPayload>> jsonTypeInfo
     )
     {
+        if (_window.Value is not { } window) return;
+
         var message = new EventMessage<TPayload>(type, payload);
         var json = JsonSerializer.Serialize(message, jsonTypeInfo);
         window.Invoke(() => window.SendWebMessage(json));

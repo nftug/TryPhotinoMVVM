@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Microsoft.Extensions.Logging;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using Reactive.Bindings.TinyLinq;
@@ -18,7 +19,7 @@ public class CounterViewModel : ViewModelBase<CounterActionType>
     private readonly CounterModel _model;
 
     public CounterViewModel(
-        ViewModelEventDispatcher dispatcher, CounterModel model) : base(dispatcher)
+        EventDispatcher dispatcher, CounterModel model, ILogger<CounterViewModel> logger) : base(dispatcher)
     {
         _model = model;
 
@@ -29,7 +30,11 @@ public class CounterViewModel : ViewModelBase<CounterActionType>
 
         _model.FizzBuzzReceivedCommand
             .Select(v => new CounterFizzBuzzEvent(new(v)))
-            .Subscribe(e => Dispatch(e, JsonContext.Default.EventMessageCounterFizzBuzzDto));
+            .Subscribe(e =>
+            {
+                Dispatch(e, JsonContext.Default.EventMessageCounterFizzBuzzDto);
+                logger.LogInformation("Invoked FizzBuzz: {FizzBuzz}", e.Payload!.Result);
+            });
     }
 
     protected override ValueTask HandleActionAsync(CounterActionType action, JsonElement? payload)

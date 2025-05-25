@@ -1,24 +1,25 @@
-using Microsoft.Extensions.DependencyInjection;
 using Photino.NET;
 using TryPhotinoMVVM.Constants;
 using TryPhotinoMVVM.Extensions;
 using TryPhotinoMVVM.Utils;
-using TryPhotinoMVVM.Views;
 
-namespace TryPhotinoMVVM.Services;
+namespace TryPhotinoMVVM.Views;
 
-public class AppWindowManagerService(
-    PhotinoWindow window, ErrorHandlerService errorHandler, IServiceProvider serviceProvider)
+public class AppService(
+    PhotinoWindowInstance windowInstance, CommandDispatcher dispatcher, ErrorHandlerService errorHandler)
 {
     private bool? _isClosing;
+    private PhotinoWindow _window = null!;
 
     public void Run()
     {
+        _window = new PhotinoWindow();
+
         string embeddedAppUrlHost = OperatingSystem.IsWindows() ? "http://localhost" : "app://localhost/";
         string embeddedAppUrl = embeddedAppUrlHost + $"?hash={typeof(Program).Assembly.GetBuildDateHash()}";
         string appUrl = EnvironmentConstants.IsDebugMode ? "http://localhost:5173/" : embeddedAppUrl;
 
-        window
+        _window
             .SetTitle(EnvironmentConstants.AppName)
             .SetUseOsDefaultSize(false)
             .SetSize(new(1145, 840))
@@ -30,25 +31,25 @@ public class AppWindowManagerService(
             .RegisterWindowCreatedHandler(HandleWindowCreated)
             .RegisterWindowClosingHandler(HandleWindowClosing);
 
-        window.WaitForClose();
+        _window.WaitForClose();
     }
 
     private async void HandleWebMessageReceived(object? sender, string messageJson)
     {
         try
         {
-            var dispatcher = serviceProvider.GetRequiredService<CommandMessageDispatcher>();
             await dispatcher.DispatchAsync(messageJson);
         }
         catch (Exception ex)
         {
-            var errorHandler = serviceProvider.GetRequiredService<ErrorHandlerService>();
             errorHandler.HandleError(ex);
         }
     }
 
     private void HandleWindowCreated(object? sender, EventArgs e)
     {
+        windowInstance.Inject(_window);
+
         AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
         {
             errorHandler.HandleError((e.ExceptionObject as Exception)!);
@@ -63,13 +64,17 @@ public class AppWindowManagerService(
 
     private bool HandleWindowClosing(object? sender, EventArgs e)
     {
-        if (_isClosing is { } isClosing) return !isClosing;
+        if (_isClosing is { } isClosing)
+        {
+            _isClosing = null;
+            return isClosing;
+        }
 
         Task.Run(() =>
         {
             // NOTE: ここに何かしらの終了処理を非同期で入れる
             _isClosing = true;
-            window.Invoke(() => window.Close());
+            _window.Invoke(() => _window.Close());
         });
 
         return true;

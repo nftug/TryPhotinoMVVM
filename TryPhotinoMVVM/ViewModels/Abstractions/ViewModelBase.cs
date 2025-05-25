@@ -6,7 +6,7 @@ using TryPhotinoMVVM.Views;
 
 namespace TryPhotinoMVVM.ViewModels.Abstractions;
 
-public abstract class ViewModelBase<TAction>(ViewModelEventDispatcher dispatcher) : IViewModel
+public abstract class ViewModelBase<TAction>(EventDispatcher dispatcher) : IViewModel
     where TAction : struct, Enum
 {
     public abstract ViewModelType ViewModelType { get; }
