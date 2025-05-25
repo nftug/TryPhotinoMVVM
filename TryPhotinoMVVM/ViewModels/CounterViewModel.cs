@@ -1,7 +1,6 @@
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using Reactive.Bindings;
-using Reactive.Bindings.Extensions;
 using Reactive.Bindings.TinyLinq;
 using TryPhotinoMVVM.Constants;
 using TryPhotinoMVVM.Extensions;

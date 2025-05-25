@@ -1,6 +1,4 @@
-﻿using Photino.NET;
-
-public class Program
+﻿public class Program
 {
     [STAThread]
     public static void Main()

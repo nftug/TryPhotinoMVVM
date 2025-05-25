@@ -2,8 +2,9 @@ using Photino.NET;
 using TryPhotinoMVVM.Constants;
 using TryPhotinoMVVM.Extensions;
 using TryPhotinoMVVM.Utils;
+using TryPhotinoMVVM.Views;
 
-namespace TryPhotinoMVVM.Views;
+namespace TryPhotinoMVVM.Services;
 
 public class AppService(
     PhotinoWindowInstance windowInstance, CommandDispatcher dispatcher, ErrorHandlerService errorHandler)
@@ -24,7 +25,7 @@ public class AppService(
             .SetUseOsDefaultSize(false)
             .SetSize(new(1145, 840))
             .Center()
-            .SetContextMenuEnabled(false)
+            .SetContextMenuEnabled(!EnvironmentConstants.IsDebugMode)
             .RegisterCustomSchemeHandler(new Uri(embeddedAppUrl).Scheme, AppSchemeHandler.Handle)
             .LoadRawString($"""<meta http-equiv="refresh" content="0; URL='{appUrl}'" />""")
             .RegisterWebMessageReceivedHandler(HandleWebMessageReceived)

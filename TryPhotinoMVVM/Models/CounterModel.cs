@@ -41,7 +41,6 @@ public class CounterModel
         }
 
         _count.Value = value;
-        _twiceCount.Value = null;
         _isProcessing.Value = true;
 
         var twiceCountTask = GetTwiceCountAsync(value);
