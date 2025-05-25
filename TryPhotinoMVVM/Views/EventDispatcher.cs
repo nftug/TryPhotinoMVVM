@@ -17,6 +17,6 @@ public class EventDispatcher(PhotinoWindowInstance _window)
 
         var message = new EventMessage<TPayload>(type, payload);
         var json = JsonSerializer.Serialize(message, jsonTypeInfo);
-        window.Invoke(() => window.SendWebMessage(json));
+        window.SendWebMessage(json);
     }
 }

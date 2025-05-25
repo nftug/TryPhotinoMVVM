@@ -74,7 +74,7 @@ public class AppService(
         {
             // NOTE: ここに何かしらの終了処理を非同期で入れる
             _isClosing = true;
-            _window.Invoke(() => _window.Close());
+            _window.Close();
         });
 
         return true;
