@@ -67,7 +67,7 @@ public class AppService(
         if (_isClosing is { } isClosing)
         {
             _isClosing = null;
-            return isClosing;
+            return !isClosing;
         }
 
         Task.Run(() =>
