@@ -26,11 +26,15 @@ public class AppService(
             .SetSize(new(1145, 840))
             .Center()
             .SetContextMenuEnabled(!EnvironmentConstants.IsDebugMode)
-            .RegisterCustomSchemeHandler(new Uri(embeddedAppUrl).Scheme, AppSchemeHandler.Handle)
             .LoadRawString($"""<meta http-equiv="refresh" content="0; URL='{appUrl}'" />""")
             .RegisterWebMessageReceivedHandler(HandleWebMessageReceived)
             .RegisterWindowCreatedHandler(HandleWindowCreated)
             .RegisterWindowClosingHandler(HandleWindowClosing);
+
+        if (!EnvironmentConstants.IsDebugMode)
+        {
+            _window.RegisterCustomSchemeHandler(new Uri(embeddedAppUrl).Scheme, AppSchemeHandler.Handle);
+        }
 
         _window.WaitForClose();
     }

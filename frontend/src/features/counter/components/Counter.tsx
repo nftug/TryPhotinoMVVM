@@ -30,14 +30,14 @@ const Counter = () => {
       <Stack direction="row" gap={2}>
         <Button
           variant="contained"
-          onClick={() => dispatch({ type: 'increment' })}
+          onClick={() => dispatch({ command: 'increment' })}
           disabled={state.isProcessing}
         >
           +
         </Button>
         <Button
           variant="contained"
-          onClick={() => dispatch({ type: 'decrement' })}
+          onClick={() => dispatch({ command: 'decrement' })}
           disabled={!state.canDecrement || state.isProcessing}
         >
           -
@@ -53,7 +53,7 @@ const Counter = () => {
           defaultValue={state.count}
           onBlur={(e) => {
             const value = parseInt(e.target.value)
-            if (!isNaN(value)) dispatch({ type: 'set', payload: { value } })
+            if (!isNaN(value)) dispatch({ command: 'set', payload: { value } })
           }}
         />
       </Box>

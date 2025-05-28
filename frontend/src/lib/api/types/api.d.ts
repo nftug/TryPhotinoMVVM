@@ -1,20 +1,18 @@
 export type EventMessage<T extends EventPayload> = {
   type: ViewModelTypeName
-  payload?: T
-}
+} & T
 
 export type EventPayload = {
-  type: string
+  event: string
   payload?: unknown
 }
 
 export type CommandMessage<T extends CommandPayload> = {
   type: ViewModelTypeName
-  payload?: T
-}
+} & T
 
 export type CommandPayload = {
-  type: string
+  command: string
   payload?: unknown
 }
 

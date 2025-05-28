@@ -7,7 +7,7 @@ using TryPhotinoMVVM.Messages;
 namespace TryPhotinoMVVM.Constants;
 
 #region Message
-[JsonSerializable(typeof(EventMessage<EventEmptyPayload>))]
+[JsonSerializable(typeof(EventMessage<EventEmptyMessage>))]
 [JsonSerializable(typeof(EventMessage<ErrorMessage>))]
 [JsonSerializable(typeof(CommandMessage))]
 #endregion

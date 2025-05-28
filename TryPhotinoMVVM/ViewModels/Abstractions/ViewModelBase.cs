@@ -13,15 +13,15 @@ public abstract class ViewModelBase<TAction>(EventDispatcher dispatcher) : IView
 
     public bool CanHandle(ViewModelType type) => type == ViewModelType;
 
-    public ValueTask HandleAsync(CommandPayload payload)
-        => payload.Type.Equals(DefaultActionType.Init.ToString(), StringComparison.OrdinalIgnoreCase)
+    public ValueTask HandleAsync(string command, JsonElement? payload)
+        => command.Equals(DefaultActionType.Init.ToString(), StringComparison.OrdinalIgnoreCase)
             ? HandleInitAsync()
-            : !Enum.TryParse<TAction>(payload.Type, true, out var action)
-            ? ValueTask.CompletedTask
-            : HandleActionAsync(action, payload.Payload);
+            : Enum.TryParse<TAction>(command, true, out var action)
+            ? HandleActionAsync(action, payload)
+            : ValueTask.CompletedTask;
 
-    protected void Dispatch<T>(EventPayload<T> payload, JsonTypeInfo<EventMessage<T>> jsonTypeInfo)
-        => dispatcher.Dispatch(ViewModelType, payload, jsonTypeInfo);
+    protected void Dispatch<T>(EventMessage<T> message, JsonTypeInfo<EventMessage<T>> jsonTypeInfo)
+        => dispatcher.Dispatch(message, jsonTypeInfo);
 
     protected abstract ValueTask HandleActionAsync(TAction action, JsonElement? payload);
 

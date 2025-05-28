@@ -20,6 +20,6 @@ public class CommandDispatcher
         if (msg == null) return;
 
         var handler = _handlers.FirstOrDefault(h => h.CanHandle(msg.Type));
-        if (handler != null) await handler.HandleAsync(msg.Payload);
+        if (handler != null) await handler.HandleAsync(msg.Command, msg.Payload);
     }
 }

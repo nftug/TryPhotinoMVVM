@@ -6,5 +6,5 @@ namespace TryPhotinoMVVM.ViewModels.Abstractions;
 public interface IViewModel
 {
     bool CanHandle(ViewModelType type);
-    ValueTask HandleAsync(CommandPayload payload);
+    ValueTask HandleAsync(string command, JsonElement? payload);
 }

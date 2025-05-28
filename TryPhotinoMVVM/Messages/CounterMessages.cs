@@ -6,13 +6,13 @@ namespace TryPhotinoMVVM.Messages;
 
 #region State
 public record CounterStateEvent(CounterStateDto Payload)
-    : EventPayload<CounterStateDto>("state", Payload);
+    : EventMessage<CounterStateDto>(ViewModelType.Counter, "state", Payload);
 
 #endregion
 
 #region Events
 public record CounterFizzBuzzEvent(CounterFizzBuzzDto Payload)
-    : EventPayload<CounterFizzBuzzDto>("fizzBuzz", Payload);
+    : EventMessage<CounterFizzBuzzDto>(ViewModelType.Counter, "fizzBuzz", Payload);
 #endregion
 
 #region Actions

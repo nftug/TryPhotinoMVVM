@@ -3,17 +3,16 @@ import { ViewModelTypeName } from '../types/api'
 import useViewModel from './useViewModel'
 
 export const useErrorHandler = () => {
-  const { onEvent } = useViewModel<never, ErrorEventPayload>('Error' as ViewModelTypeName)
+  const { onEvent } = useViewModel<ErrorEventPayload, never>('Error' as ViewModelTypeName)
 
   useEffect(() => {
-    const unsubscribe = onEvent('error', (payload) => {
+    return onEvent('error', (payload) => {
       console.error(payload.message)
     })
-    return () => unsubscribe()
   }, [onEvent])
 }
 
 export type ErrorEventPayload = {
-  type: 'error'
+  event: 'error'
   payload: { type: ViewModelTypeName; message: string }
 }

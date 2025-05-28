@@ -10,10 +10,10 @@ export type CounterFizzBuzz = {
 }
 
 export type CounterCommand =
-  | { type: 'increment' }
-  | { type: 'decrement' }
-  | { type: 'set'; payload: { value: number } }
+  | { command: 'increment' }
+  | { command: 'decrement' }
+  | { command: 'set'; payload: { value: number } }
 
 export type CounterEvent =
-  | { type: 'state'; payload: CounterState }
-  | { type: 'fizzBuzz'; payload: CounterFizzBuzz }
+  | { event: 'state'; payload: CounterState }
+  | { event: 'fizzBuzz'; payload: CounterFizzBuzz }

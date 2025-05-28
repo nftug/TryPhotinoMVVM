@@ -1,17 +1,21 @@
-import { CommandMessage, CommandPayload, EventMessage, ViewModelTypeName } from '../types/api'
+import {
+  CommandMessage,
+  CommandPayload,
+  EventMessage,
+  EventPayload,
+  ViewModelTypeName
+} from '../types/api'
 
-type MessageHandler = (payload: unknown) => void
+type MessageHandler = (payload: EventPayload) => void
 
 export const eventHandlerSetMap = new Map<ViewModelTypeName, Set<MessageHandler>>()
 
 export const initializeViewHandler = () => {
   window.external.receiveMessage((json) => {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const msg: EventMessage<any> = JSON.parse(json)
-      const { type, payload } = msg
+      const { type, event, payload } = JSON.parse(json) as EventMessage<EventPayload>
       const eventHandlerSet = eventHandlerSetMap.get(type)
-      eventHandlerSet?.forEach((handler) => handler(payload))
+      eventHandlerSet?.forEach((handler) => handler({ event, payload }))
     } catch {
       console.warn('Invalid message from Photino:', json)
     }

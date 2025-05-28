@@ -23,9 +23,10 @@ public static class JsonElementExtensions
     public static ValueTask HandlePayloadSync<T>(
         this JsonElement payload, JsonTypeInfo<T> jsonTypeInfo, Action<T> callback)
     {
-        var parsed = payload.ParsePayload(jsonTypeInfo);
-        if (parsed == null) return ValueTask.CompletedTask;
-        callback(parsed);
-        return ValueTask.CompletedTask;
+        return HandlePayloadAsync(payload, jsonTypeInfo, (parsed) =>
+        {
+            callback(parsed);
+            return ValueTask.CompletedTask;
+        });
     }
 }

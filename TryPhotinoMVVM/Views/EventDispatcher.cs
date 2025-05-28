@@ -8,14 +8,11 @@ namespace TryPhotinoMVVM.Views;
 public class EventDispatcher(PhotinoWindowInstance _window)
 {
     public void Dispatch<TPayload>(
-        ViewModelType type,
-        EventPayload<TPayload> payload,
+        EventMessage<TPayload> message,
         JsonTypeInfo<EventMessage<TPayload>> jsonTypeInfo
     )
     {
         if (_window.Value is not { } window) return;
-
-        var message = new EventMessage<TPayload>(type, payload);
         var json = JsonSerializer.Serialize(message, jsonTypeInfo);
         window.SendWebMessage(json);
     }

@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo } from 'react'
 import { dispatchCommand, eventHandlerSetMap } from '../stores/viewHandler'
 import type { CommandPayload, EventPayload, ViewModelTypeName } from '../types/api'
 
-const useViewModel = <TCommandPayload extends CommandPayload, TEventPayload extends EventPayload>(
+const useViewModel = <TEventPayload extends EventPayload, TCommandPayload extends CommandPayload>(
   type: ViewModelTypeName
 ) => {
   const eventEmitter = useMemo(
@@ -12,27 +12,28 @@ const useViewModel = <TCommandPayload extends CommandPayload, TEventPayload exte
   )
 
   const dispatch = useCallback(
-    (payload: TCommandPayload) => dispatchCommand({ type, payload }),
+    (command: CommandPayload) => dispatchCommand({ type, ...command }),
     [type]
   )
 
-  const onEvent = <T extends TEventPayload['type']>(
-    type: T,
-    cb: (payload: Extract<TEventPayload, { type: T }>['payload']) => void
+  const onEvent = <T extends TEventPayload['event']>(
+    event: T,
+    cb: (payload: Extract<TEventPayload, { event: T }>['payload']) => void
   ) =>
-    eventEmitter.on('event', ({ type: eventType, payload: eventPayload }) => {
-      if (eventType !== type) return
-      cb(eventPayload as Extract<TEventPayload, { type: T }>)
+    eventEmitter.on('event', ({ event: eventName, payload: eventPayload }) => {
+      if (eventName !== event) return
+      cb(eventPayload as Extract<TEventPayload, { event: T }>['payload'])
     })
 
   useEffect(() => {
-    const emitEvent = (payload: unknown) => eventEmitter.emit('event', payload as TEventPayload)
+    const emitEvent = (payload: EventPayload) =>
+      eventEmitter.emit('event', payload as TEventPayload)
 
     const handlerSet = eventHandlerSetMap.get(type) ?? new Set()
     handlerSet.add(emitEvent)
     eventHandlerSetMap.set(type, handlerSet)
 
-    dispatch({ type: 'init' } as TCommandPayload)
+    dispatch({ command: 'init' } as TCommandPayload)
 
     return () => {
       handlerSet.delete(emitEvent)

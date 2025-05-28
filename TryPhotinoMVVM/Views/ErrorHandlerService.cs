@@ -15,8 +15,7 @@ public class ErrorHandlerService(PhotinoWindowInstance window, EventDispatcher d
              exception is ViewModelException vmEx
              ? new(vmEx.Type, vmEx.Message) : new(null, exception.Message);
 
-        dispatcher.Dispatch(
-           ViewModelType.Error, new ErrorEvent(payload), JsonContext.Default.EventMessageErrorMessage);
+        dispatcher.Dispatch(new ErrorEvent(payload), JsonContext.Default.EventMessageErrorMessage);
 
         window.Value?.ShowMessage(
             EnvironmentConstants.AppName, exception.Message, PhotinoDialogButtons.Ok, PhotinoDialogIcon.Error);
