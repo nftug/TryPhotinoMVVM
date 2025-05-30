@@ -3,7 +3,7 @@ import { ViewModelTypeName } from '../types/api'
 import useViewModel from './useViewModel'
 
 export const useErrorHandler = () => {
-  const { onEvent } = useViewModel<ErrorEventPayload, never>('Error' as ViewModelTypeName)
+  const { onEvent } = useViewModel<ErrorEventPayload, never>('Error')
 
   useEffect(() => {
     return onEvent('error', (payload) => {

@@ -1,3 +1,4 @@
+import { ViewId } from '@/lib/api/types/api'
 import { flexCenterStyle } from '@/lib/layout/constants/styles'
 import { Box, Button, Stack, TextField, Typography } from '@mui/material'
 import { useSnackbar } from 'notistack'
@@ -5,8 +6,12 @@ import { useEffect, useRef } from 'react'
 import { match, P } from 'ts-pattern'
 import { useCounterViewModel } from '../hooks/useCounterViewModel'
 
-const Counter = () => {
-  const { state, dispatch, onEvent } = useCounterViewModel()
+interface Props {
+  viewId?: ViewId
+}
+
+const Counter = ({ viewId }: Props) => {
+  const { state, dispatch, onEvent } = useCounterViewModel(viewId)
   const { enqueueSnackbar } = useSnackbar()
   const inputRef = useRef<HTMLInputElement>(null)
 

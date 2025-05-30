@@ -1,22 +1,30 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace TryPhotinoMVVM.Messages;
 
 #region Events
-public record EventMessage<TPayload>(ViewModelType Type, string Event, TPayload? Payload);
+public record EventMessage<TPayload>(string Event, TPayload? Payload)
+{
+    public Guid ViewId { get; init; }
+}
 
-public record EventEmptyMessage(ViewModelType Type, string Event)
-    : EventMessage<EventEmptyMessage.DummyPayload>(Type, Event, new())
+public record EventEmptyMessage(string Event)
+    : EventMessage<EventEmptyMessage.DummyPayload>(Event, new())
 {
     public record DummyPayload;
 }
 #endregion
 
 #region Actions
-public record CommandMessage(ViewModelType Type, string Command, JsonElement? Payload);
+public record CommandMessage(Guid ViewId, string Command, JsonElement? Payload);
 
+[JsonConverter(typeof(JsonStringEnumConverter<DefaultActionType>))]
 public enum DefaultActionType
 {
-    Init
+    Init,
+    Leave
 }
+
+public record InitCommandPayload(ViewModelType Type);
 #endregion

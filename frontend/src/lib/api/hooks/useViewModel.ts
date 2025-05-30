@@ -1,19 +1,24 @@
 import { createNanoEvents } from 'nanoevents'
 import { useCallback, useEffect, useMemo } from 'react'
 import { dispatchCommand, eventHandlerSetMap } from '../stores/viewHandler'
-import type { CommandPayload, EventPayload, ViewModelTypeName } from '../types/api'
+import type { CommandPayload, EventPayload, ViewId, ViewModelTypeName } from '../types/api'
 
 const useViewModel = <TEventPayload extends EventPayload, TCommandPayload extends CommandPayload>(
-  type: ViewModelTypeName
+  viewType: ViewModelTypeName,
+  viewIdShared?: ViewId
 ) => {
   const eventEmitter = useMemo(
     () => createNanoEvents<{ event: (payload: TEventPayload) => void }>(),
     []
   )
+  const viewId = useMemo<ViewId>(
+    () => viewIdShared ?? (crypto.randomUUID() as ViewId),
+    [viewIdShared]
+  )
 
   const dispatch = useCallback(
-    (command: CommandPayload) => dispatchCommand({ type, ...command }),
-    [type]
+    (command: TCommandPayload) => dispatchCommand({ viewId, ...command }),
+    [viewId]
   )
 
   const onEvent = <T extends TEventPayload['event']>(
@@ -29,19 +34,24 @@ const useViewModel = <TEventPayload extends EventPayload, TCommandPayload extend
     const emitEvent = (payload: EventPayload) =>
       eventEmitter.emit('event', payload as TEventPayload)
 
-    const handlerSet = eventHandlerSetMap.get(type) ?? new Set()
+    const handlerSet = eventHandlerSetMap.get(viewId) ?? new Set()
     handlerSet.add(emitEvent)
-    eventHandlerSetMap.set(type, handlerSet)
+    eventHandlerSetMap.set(viewId, handlerSet)
 
-    dispatch({ command: 'init' } as TCommandPayload)
+    dispatch({ command: 'init', payload: { type: viewType } } as TCommandPayload)
 
     return () => {
       handlerSet.delete(emitEvent)
-      eventHandlerSetMap.set(type, handlerSet)
-    }
-  }, [dispatch, eventEmitter, type])
+      eventHandlerSetMap.set(viewId, handlerSet)
 
-  return { dispatch, onEvent }
+      // viewIdを共有中の場合は自動で破棄しない
+      if (!viewIdShared) {
+        dispatch({ command: 'leave' } as TCommandPayload)
+      }
+    }
+  }, [dispatch, eventEmitter, viewId, viewType, viewIdShared])
+
+  return { dispatch, onEvent, viewId }
 }
 
 export default useViewModel

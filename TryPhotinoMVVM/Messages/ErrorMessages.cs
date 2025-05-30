@@ -11,7 +11,9 @@ public class ViewModelException : Exception
     }
 }
 
+/*
 public record ErrorMessage(ViewModelType? Type, string Message);
 
 public record ErrorEvent(ErrorMessage Payload)
     : EventMessage<ErrorMessage>(ViewModelType.Error, "error", Payload);
+*/

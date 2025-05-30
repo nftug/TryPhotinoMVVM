@@ -1,5 +1,7 @@
+export type ViewId = ReturnType<typeof crypto.randomUUID> & { readonly __brand: 'ViewId' }
+
 export type EventMessage<T extends EventPayload> = {
-  type: ViewModelTypeName
+  viewId: ViewId
 } & T
 
 export type EventPayload = {
@@ -8,7 +10,7 @@ export type EventPayload = {
 }
 
 export type CommandMessage<T extends CommandPayload> = {
-  type: ViewModelTypeName
+  viewId: ViewId
 } & T
 
 export type CommandPayload = {

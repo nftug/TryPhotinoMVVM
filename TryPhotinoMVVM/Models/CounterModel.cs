@@ -1,12 +1,14 @@
 using Reactive.Bindings;
+using Reactive.Bindings.Extensions;
 using Reactive.Bindings.TinyLinq;
 using TryPhotinoMVVM.Domain.Counter;
 using TryPhotinoMVVM.Domain.Enums;
 using TryPhotinoMVVM.Messages;
+using TryPhotinoMVVM.Models.Abstractions;
 
 namespace TryPhotinoMVVM.Models;
 
-public class CounterModel
+public class CounterModel : DisposableBase
 {
     private readonly ReactivePropertySlim<long> _count = new();
     private readonly ReactivePropertySlim<long?> _twiceCount = new();
@@ -17,11 +19,16 @@ public class CounterModel
 
     public CounterModel()
     {
+        _count.AddTo(Disposable);
+        _twiceCount.AddTo(Disposable);
+        _isProcessing.AddTo(Disposable);
+
         CounterState = _count
             .CombineLatest(_twiceCount, (count, twice) => (count, twice))
             .CombineLatest(_isProcessing, (x, isProcessing) => (x.count, x.twice, isProcessing))
             .Select(x => new CounterState(x.count, x.twice, x.isProcessing))
-            .ToReadOnlyReactivePropertySlim(mode: ReactivePropertyMode.RaiseLatestValueOnSubscribe);
+            .ToReadOnlyReactivePropertySlim(mode: ReactivePropertyMode.RaiseLatestValueOnSubscribe)
+            .AddTo(Disposable);
     }
 
     public void ForceNotify()

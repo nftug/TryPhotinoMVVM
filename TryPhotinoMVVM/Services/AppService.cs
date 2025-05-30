@@ -12,8 +12,10 @@ public class AppService(
     private bool? _isClosing;
     private PhotinoWindow _window = null!;
 
-    public void Run()
+    public void Run(AppContainer container)
     {
+        dispatcher.InjectContainer(container);
+
         _window = new PhotinoWindow();
 
         string embeddedAppUrlHost = OperatingSystem.IsWindows() ? "http://localhost" : "app://localhost/";

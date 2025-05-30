@@ -3,8 +3,9 @@ using TryPhotinoMVVM.Messages;
 
 namespace TryPhotinoMVVM.ViewModels.Abstractions;
 
-public interface IViewModel
+public interface IViewModel : IDisposable
 {
-    bool CanHandle(ViewModelType type);
     ValueTask HandleAsync(string command, JsonElement? payload);
+    IViewModel SetViewId(Guid viewId);
+    void HandleInit();
 }

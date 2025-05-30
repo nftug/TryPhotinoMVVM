@@ -8,8 +8,8 @@ namespace TryPhotinoMVVM.Constants;
 
 #region Message
 [JsonSerializable(typeof(EventMessage<EventEmptyMessage>))]
-[JsonSerializable(typeof(EventMessage<ErrorMessage>))]
 [JsonSerializable(typeof(CommandMessage))]
+[JsonSerializable(typeof(InitCommandPayload))]
 #endregion
 
 #region Counter

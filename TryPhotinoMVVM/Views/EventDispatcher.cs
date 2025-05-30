@@ -13,6 +13,8 @@ public class EventDispatcher(PhotinoWindowInstance _window)
     )
     {
         if (_window.Value is not { } window) return;
+        if (message.ViewId == default) return;
+
         var json = JsonSerializer.Serialize(message, jsonTypeInfo);
         window.SendWebMessage(json);
     }

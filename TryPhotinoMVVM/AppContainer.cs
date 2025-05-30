@@ -1,28 +1,29 @@
 using Microsoft.Extensions.Logging;
-using Photino.NET;
 using StrongInject;
 using TryPhotinoMVVM.Models;
 using TryPhotinoMVVM.Services;
 using TryPhotinoMVVM.ViewModels;
 using TryPhotinoMVVM.Views;
 
-[Register(typeof(PhotinoWindowInstance))]
-[Register(typeof(AppService))]
-[Register(typeof(EventDispatcher))]
-[RegisterFactory(typeof(CommandDispatcherFactory))]
-[Register(typeof(ErrorHandlerService))]
+namespace TryPhotinoMVVM;
+
+[Register(typeof(ConsoleLogWriter), typeof(ILogWriter))]
+[Register(typeof(MinimalLogger<>), typeof(ILogger<>))]
+public class ConsoleLoggerModule;
+
+[Register(typeof(PhotinoWindowInstance), Scope.SingleInstance)]
+[Register(typeof(AppService), Scope.SingleInstance)]
+[Register(typeof(EventDispatcher), Scope.SingleInstance)]
+[Register(typeof(CommandDispatcher), Scope.SingleInstance)]
+[Register(typeof(ErrorHandlerService), Scope.SingleInstance)]
+public class AppBaseModule;
+
 [Register(typeof(CounterModel))]
 [Register(typeof(CounterViewModel))]
-[RegisterFactory(typeof(LoggerFactory<CounterViewModel>))]
-[RegisterFactory(typeof(LoggerFactory<Program>))]
-public partial class AppContainer : IContainer<AppService>;
+public class CounterModule;
 
-public class CommandDispatcherFactory(CounterViewModel vm) : IFactory<CommandDispatcher>
-{
-    public CommandDispatcher Create() => new CommandDispatcher().Register(vm);
-}
-
-public class LoggerFactory<T> : IFactory<ILogger<T>>
-{
-    public ILogger<T> Create() => new MinimalLogger<T>(new ConsoleLogWriter());
-}
+[RegisterModule(typeof(ConsoleLoggerModule))]
+[RegisterModule(typeof(AppBaseModule))]
+[RegisterModule(typeof(CounterModule))]
+public partial class AppContainer
+    : IContainer<AppService>, IContainer<CounterViewModel>;
