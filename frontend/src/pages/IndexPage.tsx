@@ -8,7 +8,7 @@ const IndexPage = () => {
   const counterViewId = useAtomValue(counterViewIdAtom)
 
   return (
-    <Stack sx={flexCenterStyle} spacing={5} height={1}>
+    <Stack sx={flexCenterStyle} spacing={5} minHeight={1}>
       <Typography variant="h3">Vite + React + Photino.NET</Typography>
 
       <Counter />
