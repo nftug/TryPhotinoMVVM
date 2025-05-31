@@ -29,6 +29,8 @@ public class CounterModel : DisposableBase
             .Select(x => new CounterState(x.count, x.twice, x.isProcessing))
             .ToReadOnlyReactivePropertySlim(mode: ReactivePropertyMode.RaiseLatestValueOnSubscribe)
             .AddTo(Disposable);
+
+        FizzBuzzReceivedCommand.AddTo(Disposable);
     }
 
     public void ForceNotify()

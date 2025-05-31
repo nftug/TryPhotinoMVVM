@@ -24,9 +24,5 @@ public abstract class ViewModelBase<TAction>(EventDispatcher dispatcher) : Dispo
 
     public abstract void HandleInit();
 
-    public IViewModel SetViewId(Guid viewId)
-    {
-        ViewId = viewId;
-        return this;
-    }
+    public void SetViewId(Guid viewId) => ViewId = viewId;
 }

@@ -14,8 +14,6 @@ public class AppService(
 
     public void Run(AppContainer container)
     {
-        dispatcher.InjectContainer(container);
-
         _window = new PhotinoWindow();
 
         string embeddedAppUrlHost = OperatingSystem.IsWindows() ? "http://localhost" : "app://localhost/";
@@ -29,7 +27,7 @@ public class AppService(
             .Center()
             .SetContextMenuEnabled(!EnvironmentConstants.IsDebugMode)
             .LoadRawString($"""<meta http-equiv="refresh" content="0; URL='{appUrl}'" />""")
-            .RegisterWebMessageReceivedHandler(HandleWebMessageReceived)
+            .RegisterWebMessageReceivedHandler((_, json) => HandleWebMessageReceived(json, container))
             .RegisterWindowCreatedHandler(HandleWindowCreated)
             .RegisterWindowClosingHandler(HandleWindowClosing);
 
@@ -41,9 +39,9 @@ public class AppService(
         _window.WaitForClose();
     }
 
-    private async void HandleWebMessageReceived(object? sender, string messageJson)
+    private async void HandleWebMessageReceived(string messageJson, AppContainer container)
     {
-        await dispatcher.DispatchAsync(messageJson);
+        await dispatcher.DispatchAsync(messageJson, container);
     }
 
     private void HandleWindowCreated(object? sender, EventArgs e)

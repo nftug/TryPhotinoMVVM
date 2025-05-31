@@ -19,7 +19,7 @@ public class CounterViewModel : ViewModelBase<CounterActionType>
     public CounterViewModel(
         EventDispatcher dispatcher, CounterModel model, ILogger<CounterViewModel> logger) : base(dispatcher)
     {
-        _model = model.AddTo(Disposable);
+        _model = model;
 
         _model.CounterState
             .Where(v => v != null)
