@@ -1,55 +1,38 @@
-import { useCallback, useEffect, useMemo } from 'react'
-import { addEventHandler, dispatchCommand } from '../stores/viewHandler'
-import type {
-  CommandPayload,
-  DefaultCommand,
-  DefaultEvent,
-  EventPayload,
-  ViewId,
-  ViewModelTypeName
-} from '../types/api'
+import { Unsubscribe } from 'nanoevents'
+import { useEffect, useMemo, useState } from 'react'
+import { createCommandDispatcher, createEventSubscriber, initView } from '../stores/viewHandler'
+import type { CommandPayload, EventPayload, ViewId, ViewModelTypeName } from '../types/apiTypes'
 
 const useViewModel = <TEvent extends EventPayload, TCommand extends CommandPayload>(
   viewType: ViewModelTypeName,
   viewIdShared?: ViewId
 ) => {
-  const viewId = useMemo<ViewId>(
-    () => viewIdShared ?? (crypto.randomUUID() as ViewId),
-    [viewIdShared]
-  )
+  const viewId = useMemo(() => viewIdShared ?? (crypto.randomUUID() as ViewId), [viewIdShared])
 
-  const dispatch = useCallback(
-    (command: TCommand) => dispatchCommand({ viewId, ...command }),
-    [viewId]
-  )
-
-  const onEvent = useCallback(
-    <TName extends TEvent['event']>(
-      eventName: TName,
-      callback: (payload: Extract<TEvent, { event: TName }>['payload']) => void
-    ) => addEventHandler(viewId, eventName, callback),
-    [viewId]
-  )
+  const dispatch = useMemo(() => createCommandDispatcher<TCommand>(viewId), [viewId])
+  const subscribe = useMemo(() => createEventSubscriber<TEvent>(viewId), [viewId])
+  const useViewState = useMemo(() => createViewStateHook<TEvent>(subscribe), [subscribe])
 
   // 初期化と破棄のコマンド発行
-  useEffect(() => {
-    dispatchCommand<DefaultCommand>({ viewId, command: 'init', payload: { type: viewType } })
+  useEffect(
+    () => initView({ viewId, viewType, persist: !!viewIdShared }),
+    [viewId, viewType, viewIdShared]
+  )
 
-    return () => {
-      if (!viewIdShared) {
-        dispatchCommand<DefaultCommand>({ viewId, command: 'leave' })
-      }
-    }
-  }, [viewId, viewType, viewIdShared])
+  return { dispatch, subscribe, viewId, useViewState }
+}
 
-  // エラーハンドリング
-  useEffect(() => {
-    return addEventHandler<DefaultEvent, 'error'>(viewId, 'error', (payload) =>
-      console.error(payload.message)
-    )
-  }, [viewId])
-
-  return { dispatch, onEvent, viewId }
+const createViewStateHook = <TEvent extends EventPayload>(
+  subscribe: <TName extends TEvent['event']>(
+    eventName: TName,
+    callback: (payload: Extract<TEvent, { event: TName }>['payload']) => void
+  ) => Unsubscribe
+) => {
+  return function useViewState<TName extends TEvent['event']>(eventName: TName) {
+    const [state, setState] = useState<Extract<TEvent, { event: TName }>['payload']>()
+    useEffect(() => subscribe(eventName, setState), [eventName])
+    return state
+  }
 }
 
 export default useViewModel

@@ -44,7 +44,7 @@ public class CounterModel : DisposableBase
         if (value < 0)
         {
             _count.ForceNotify();
-            return;
+            throw new Exception("Invalid value!");
         }
 
         _count.Value = value;

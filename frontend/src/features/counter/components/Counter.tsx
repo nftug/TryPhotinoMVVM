@@ -1,4 +1,4 @@
-import { ViewId } from '@/lib/api/types/api'
+import { ViewId } from '@/lib/api/types/apiTypes'
 import { flexCenterStyle } from '@/lib/layout/constants/styles'
 import { Box, Button, Stack, TextField, Typography } from '@mui/material'
 import { useSnackbar } from 'notistack'
@@ -11,7 +11,7 @@ interface Props {
 }
 
 const Counter = ({ viewId }: Props) => {
-  const { state, dispatch, onEvent } = useCounterViewModel(viewId)
+  const { state, dispatch, subscribe } = useCounterViewModel(viewId)
   const { enqueueSnackbar } = useSnackbar()
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -21,10 +21,10 @@ const Counter = ({ viewId }: Props) => {
   }, [state])
 
   useEffect(() => {
-    return onEvent('fizzBuzz', ({ result }) => {
+    return subscribe('fizzBuzz', ({ result }) => {
       enqueueSnackbar(result, { autoHideDuration: 1500 })
     })
-  }, [enqueueSnackbar, onEvent])
+  }, [enqueueSnackbar, subscribe])
 
   if (!state) return null
 
@@ -35,14 +35,14 @@ const Counter = ({ viewId }: Props) => {
       <Stack direction="row" gap={2}>
         <Button
           variant="contained"
-          onClick={() => dispatch({ command: 'increment' })}
+          onClick={() => dispatch('increment')}
           disabled={state.isProcessing}
         >
           +
         </Button>
         <Button
           variant="contained"
-          onClick={() => dispatch({ command: 'decrement' })}
+          onClick={() => dispatch('decrement')}
           disabled={!state.canDecrement || state.isProcessing}
         >
           -
@@ -58,7 +58,7 @@ const Counter = ({ viewId }: Props) => {
           defaultValue={state.count}
           onBlur={(e) => {
             const value = parseInt(e.target.value)
-            if (!isNaN(value)) dispatch({ command: 'set', payload: { value } })
+            if (!isNaN(value)) dispatch('set', { value })
           }}
         />
       </Box>

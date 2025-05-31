@@ -1,4 +1,6 @@
-export type ViewModelTypeName = 'Counter' | 'Error'
+import { ViewModelErrorEventResult } from './viewModelError'
+
+export type ViewModelTypeName = 'Counter'
 
 export type ViewId = ReturnType<typeof crypto.randomUUID> & { readonly __brand: 'ViewId' }
 
@@ -21,11 +23,11 @@ export type CommandPayload = {
 }
 
 // Default events and commands
-export type DefaultEvent = {
+export type AppEvent = {
   event: 'error'
-  payload: { message: string }
+  payload: ViewModelErrorEventResult
 }
 
-export type DefaultCommand =
+export type AppCommand =
   | { command: 'init'; payload: { type: ViewModelTypeName } }
   | { command: 'leave' }
