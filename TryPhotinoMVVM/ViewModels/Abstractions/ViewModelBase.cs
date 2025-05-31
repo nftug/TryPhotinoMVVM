@@ -12,15 +12,18 @@ public abstract class ViewModelBase<TAction>(EventDispatcher dispatcher) : Dispo
 {
     protected Guid ViewId { get; private set; }
 
-    public ValueTask HandleAsync(string command, JsonElement? payload)
-        => Enum.TryParse<TAction>(command, true, out var action)
-            ? HandleActionAsync(action, payload)
+    public ValueTask HandleAsync(CommandMessage message)
+        => Enum.TryParse<TAction>(message.Command, true, out var action)
+            ? HandleActionAsync(action, message.Payload, message.CommandId)
             : ValueTask.CompletedTask;
 
     protected void Dispatch<T>(EventMessage<T> message, JsonTypeInfo<EventMessage<T>> jsonTypeInfo)
         => dispatcher.Dispatch(message with { ViewId = ViewId }, jsonTypeInfo);
 
-    protected abstract ValueTask HandleActionAsync(TAction action, JsonElement? payload);
+    protected void Dispatch<T>(EventResultMessage<T> message, JsonTypeInfo<EventResultMessage<T>> jsonTypeInfo)
+        => dispatcher.Dispatch(message with { ViewId = ViewId }, jsonTypeInfo);
+
+    protected abstract ValueTask HandleActionAsync(TAction action, JsonElement? payload, Guid? commandId);
 
     public abstract void HandleInit();
 

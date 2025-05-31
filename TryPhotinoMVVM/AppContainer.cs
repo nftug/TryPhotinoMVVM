@@ -19,6 +19,7 @@ public class ConsoleLoggerModule;
 [Register(typeof(EventDispatcher), Scope.SingleInstance)]
 [RegisterFactory(typeof(CommandDispatcherFactory), Scope.SingleInstance)]
 [Register(typeof(ErrorHandlerService), Scope.SingleInstance)]
+[Register(typeof(WindowViewModel))]
 public class AppBaseModule;
 
 [Register(typeof(CounterModel))]
@@ -30,8 +31,13 @@ public class CounterModule;
 [RegisterModule(typeof(ConsoleLoggerModule))]
 [RegisterModule(typeof(AppBaseModule))]
 [RegisterModule(typeof(CounterModule))]
-public partial class AppContainer
-    : IContainer<AppService>, IContainer<CounterViewModel>;
+public partial class AppContainer : IContainer<AppService>, IViewModelContainer
+;
+#endregion
+
+#region ViewModel Container
+public interface IViewModelContainer
+    : IContainer<CounterViewModel>, IContainer<WindowViewModel>;
 #endregion
 
 #region Factories
@@ -40,6 +46,7 @@ public class CommandDispatcherFactory(
 {
     public CommandDispatcher Create() =>
         new CommandDispatcher(logger, errorHandler)
-            .Register<CounterViewModel>(ViewModelType.Counter);
+            .Register<CounterViewModel>(ViewModelType.Counter)
+            .Register<WindowViewModel>(ViewModelType.Window);
 }
 #endregion

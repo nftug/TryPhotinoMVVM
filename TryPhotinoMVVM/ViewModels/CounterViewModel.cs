@@ -37,7 +37,7 @@ public class CounterViewModel : ViewModelBase<CounterActionType>
             .AddTo(Disposable);
     }
 
-    protected override ValueTask HandleActionAsync(CounterActionType action, JsonElement? payload)
+    protected override ValueTask HandleActionAsync(CounterActionType action, JsonElement? payload, Guid? commandId)
         => (action, payload) switch
         {
             (CounterActionType.Set, { } p) => p.HandlePayloadAsync(

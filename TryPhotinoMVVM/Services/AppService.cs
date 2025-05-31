@@ -23,7 +23,7 @@ public class AppService(
         _window
             .SetTitle(EnvironmentConstants.AppName)
             .SetUseOsDefaultSize(false)
-            .SetSize(new(1145, 840))
+            .SetSize(new(1400, 1024))
             .Center()
             .SetContextMenuEnabled(!EnvironmentConstants.IsDebugMode)
             .LoadRawString($"""<meta http-equiv="refresh" content="0; URL='{appUrl}'" />""")

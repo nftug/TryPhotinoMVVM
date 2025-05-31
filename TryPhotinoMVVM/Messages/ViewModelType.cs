@@ -5,6 +5,6 @@ namespace TryPhotinoMVVM.Messages;
 [JsonConverter(typeof(JsonStringEnumConverter<ViewModelType>))]
 public enum ViewModelType
 {
-    Error,
+    Window,
     Counter
 }

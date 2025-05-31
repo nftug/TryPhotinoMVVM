@@ -11,7 +11,7 @@ interface Props {
 }
 
 const Counter = ({ viewId }: Props) => {
-  const { state, dispatch, subscribe } = useCounterViewModel(viewId)
+  const { state, dispatchCommand, subscribeEvent } = useCounterViewModel(viewId)
   const { enqueueSnackbar } = useSnackbar()
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -21,10 +21,10 @@ const Counter = ({ viewId }: Props) => {
   }, [state])
 
   useEffect(() => {
-    return subscribe('fizzBuzz', ({ result }) => {
+    return subscribeEvent('fizzBuzz', ({ result }) => {
       enqueueSnackbar(result, { autoHideDuration: 1500 })
     })
-  }, [enqueueSnackbar, subscribe])
+  }, [enqueueSnackbar, subscribeEvent])
 
   if (!state) return null
 
@@ -35,14 +35,14 @@ const Counter = ({ viewId }: Props) => {
       <Stack direction="row" gap={2}>
         <Button
           variant="contained"
-          onClick={() => dispatch('increment')}
+          onClick={() => dispatchCommand('increment')}
           disabled={state.isProcessing}
         >
           +
         </Button>
         <Button
           variant="contained"
-          onClick={() => dispatch('decrement')}
+          onClick={() => dispatchCommand('decrement')}
           disabled={!state.canDecrement || state.isProcessing}
         >
           -
@@ -58,7 +58,7 @@ const Counter = ({ viewId }: Props) => {
           defaultValue={state.count}
           onBlur={(e) => {
             const value = parseInt(e.target.value)
-            if (!isNaN(value)) dispatch('set', { value })
+            if (!isNaN(value)) dispatchCommand('set', { value })
           }}
         />
       </Box>

@@ -1,11 +1,14 @@
 import { ViewModelErrorEventResult } from './viewModelError'
 
-export type ViewModelTypeName = 'Counter'
+export type ViewModelTypeName = 'Window' | 'Counter'
 
 export type ViewId = ReturnType<typeof crypto.randomUUID> & { readonly __brand: 'ViewId' }
 
+export type CommandId = ReturnType<typeof crypto.randomUUID> & { readonly __brand: 'CommandId' }
+
 export type EventMessage<T extends EventPayload> = {
   viewId: ViewId
+  commandId?: CommandId
 } & T
 
 export type EventPayload = {
@@ -15,6 +18,7 @@ export type EventPayload = {
 
 export type CommandMessage<T extends CommandPayload> = {
   viewId: ViewId
+  commandId?: CommandId
 } & T
 
 export type CommandPayload = {

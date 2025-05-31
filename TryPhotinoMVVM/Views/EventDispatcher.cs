@@ -9,12 +9,17 @@ public class EventDispatcher(PhotinoWindowInstance _window)
     public void Dispatch<TPayload>(
         EventMessage<TPayload> message,
         JsonTypeInfo<EventMessage<TPayload>> jsonTypeInfo
-    )
+    ) => DispatchInternal(message.ViewId, () => JsonSerializer.Serialize(message, jsonTypeInfo));
+
+    public void Dispatch<TPayload>(
+        EventResultMessage<TPayload> message,
+        JsonTypeInfo<EventResultMessage<TPayload>> jsonTypeInfo
+    ) => DispatchInternal(message.ViewId, () => JsonSerializer.Serialize(message, jsonTypeInfo));
+
+    private void DispatchInternal(Guid viewId, Func<string> serialize)
     {
         if (_window.Value is not { } window) return;
-        if (message.ViewId == default) return;
-
-        var json = JsonSerializer.Serialize(message, jsonTypeInfo);
-        window.SendWebMessage(json);
+        if (viewId == default) return;
+        window.SendWebMessage(serialize());
     }
 }

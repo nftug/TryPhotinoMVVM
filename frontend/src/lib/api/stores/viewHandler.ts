@@ -2,6 +2,7 @@ import { createNanoEvents } from 'nanoevents'
 import {
   AppCommand,
   AppEvent,
+  CommandId,
   CommandMessage,
   CommandPayload,
   EventMessage,
@@ -11,14 +12,20 @@ import {
 } from '../types/apiTypes'
 import { ViewModelError } from '../types/viewModelError'
 
-export type EventEmitterKey = `${ViewId}:${string}`
+type EventEmitterKey = `${ViewId}:${string}` | `${ViewId}:${string}:${CommandId}`
+
+type CommandPayloadType<TCommand extends CommandPayload, TName extends TCommand['command']> =
+  Extract<TCommand, { command: TName }> extends { payload: infer P } ? [payload: P] : []
 
 const eventEmitter = createNanoEvents<Record<EventEmitterKey, (payload: unknown) => void>>()
 
+const generateEmitterKey = (viewId: ViewId, event: string, commandId?: CommandId) =>
+  (`${viewId}:${event}` + (commandId ? `:${commandId}` : '')) as EventEmitterKey
+
 export const initializeEventHandler = () => {
   window.external.receiveMessage((json) => {
-    const { viewId, event, payload } = JSON.parse(json) as EventMessage<EventPayload>
-    eventEmitter.emit(`${viewId}:${event}`, payload)
+    const { viewId, commandId, event, payload } = JSON.parse(json) as EventMessage<EventPayload>
+    eventEmitter.emit(generateEmitterKey(viewId, event, commandId), payload)
   })
 }
 
@@ -27,7 +34,7 @@ export const createEventSubscriber = <TEvent extends EventPayload>(viewId: ViewI
     eventName: TName,
     callback: (payload: Extract<TEvent, { event: TName }>['payload']) => void
   ) => {
-    const key = `${viewId}:${eventName}` as EventEmitterKey
+    const key = generateEmitterKey(viewId, eventName)
     return eventEmitter.on(key, (payload) =>
       callback(payload as Extract<TEvent, { event: TName }>['payload'])
     )
@@ -37,13 +44,44 @@ export const createEventSubscriber = <TEvent extends EventPayload>(viewId: ViewI
 export const createCommandDispatcher = <TCommand extends CommandPayload>(viewId: ViewId) => {
   return <TName extends TCommand['command']>(
     commandName: TName,
-    // TCommand の中から、commandName に対応する payload の型を推論して引数にする
-    ...[payload]: Extract<TCommand, { command: TName }> extends { payload: infer P }
-      ? [payload: P]
-      : []
+    ...args: CommandPayloadType<TCommand, TName>
   ) => {
-    const message: CommandMessage<CommandPayload> = { viewId, command: commandName, payload }
+    const payload = args[0]
+    const message: CommandMessage<CommandPayload> =
+      payload === undefined
+        ? { viewId, command: commandName }
+        : { viewId, command: commandName, payload }
     window.external.sendMessage(JSON.stringify(message))
+  }
+}
+
+export const createCommandInvoker = <TEvent extends EventPayload, TCommand extends CommandPayload>(
+  viewId: ViewId
+) => {
+  return <
+    TName extends TCommand['command'],
+    TMatchedEvent extends Extract<TEvent, { event: `receive:${TName}` }>
+  >(
+    commandName: TName,
+    ...args: CommandPayloadType<TCommand, TName>
+  ): Promise<TMatchedEvent['payload']> => {
+    const commandId = crypto.randomUUID() as CommandId
+    const payload = args[0]
+    const message: CommandMessage<CommandPayload> = {
+      viewId,
+      command: commandName,
+      payload,
+      commandId
+    }
+
+    return new Promise((resolve) => {
+      const key = generateEmitterKey(viewId, `receive:${commandName}`, commandId)
+      const unsubscribe = eventEmitter.on(key, (payload) => {
+        unsubscribe()
+        resolve(payload as TMatchedEvent['payload'])
+      })
+      window.external.sendMessage(JSON.stringify(message))
+    })
   }
 }
 

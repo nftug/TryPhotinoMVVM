@@ -1,15 +1,31 @@
 import Counter from '@/features/counter/components/Counter'
 import { counterViewIdAtom } from '@/features/counter/stores/counterAtom'
+import useWindowViewModel from '@/features/window/hooks/useWindowViewModel'
 import { flexCenterStyle } from '@/lib/layout/constants/styles'
-import { Stack, Typography } from '@mui/material'
+import { Button, Stack, Typography } from '@mui/material'
 import { useAtomValue } from 'jotai'
 
 const IndexPage = () => {
   const counterViewId = useAtomValue(counterViewIdAtom)
+  const { showMessageBox } = useWindowViewModel()
+
+  const handleClickButton = async () => {
+    const dialogResult = await showMessageBox({
+      message: 'Press OK or Cancel',
+      title: 'Dialog test',
+      buttons: 'OkCancel',
+      icon: 'Warning'
+    })
+    showMessageBox({ message: `You pressed ${dialogResult}` })
+  }
 
   return (
     <Stack sx={flexCenterStyle} spacing={5} minHeight={1}>
       <Typography variant="h3">Vite + React + Photino.NET</Typography>
+
+      <Button variant="contained" onClick={handleClickButton}>
+        Click me!
+      </Button>
 
       <Counter />
       <Counter viewId={counterViewId} />

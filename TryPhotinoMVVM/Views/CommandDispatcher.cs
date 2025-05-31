@@ -75,7 +75,7 @@ public class CommandDispatcher(ILogger<CommandDispatcher> logger, ErrorHandlerSe
     {
         try
         {
-            await viewModel.HandleAsync(message.Command, message.Payload);
+            await viewModel.HandleAsync(message);
         }
         catch (Exception e)
         {

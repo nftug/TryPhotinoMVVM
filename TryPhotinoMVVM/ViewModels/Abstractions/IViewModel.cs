@@ -5,7 +5,7 @@ namespace TryPhotinoMVVM.ViewModels.Abstractions;
 
 public interface IViewModel : IDisposable
 {
-    ValueTask HandleAsync(string command, JsonElement? payload);
+    ValueTask HandleAsync(CommandMessage message);
     void SetViewId(Guid viewId);
     void HandleInit();
 }

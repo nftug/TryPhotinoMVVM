@@ -1,6 +1,11 @@
 import { Unsubscribe } from 'nanoevents'
 import { useEffect, useMemo, useState } from 'react'
-import { createCommandDispatcher, createEventSubscriber, initView } from '../stores/viewHandler'
+import {
+  createCommandDispatcher,
+  createCommandInvoker,
+  createEventSubscriber,
+  initView
+} from '../stores/viewHandler'
 import type { CommandPayload, EventPayload, ViewId, ViewModelTypeName } from '../types/apiTypes'
 
 const useViewModel = <TEvent extends EventPayload, TCommand extends CommandPayload>(
@@ -9,9 +14,10 @@ const useViewModel = <TEvent extends EventPayload, TCommand extends CommandPaylo
 ) => {
   const viewId = useMemo(() => viewIdShared ?? (crypto.randomUUID() as ViewId), [viewIdShared])
 
-  const dispatch = useMemo(() => createCommandDispatcher<TCommand>(viewId), [viewId])
-  const subscribe = useMemo(() => createEventSubscriber<TEvent>(viewId), [viewId])
-  const useViewState = useMemo(() => createViewStateHook<TEvent>(subscribe), [subscribe])
+  const dispatchCommand = useMemo(() => createCommandDispatcher<TCommand>(viewId), [viewId])
+  const subscribeEvent = useMemo(() => createEventSubscriber<TEvent>(viewId), [viewId])
+  const invokeCommand = useMemo(() => createCommandInvoker<TEvent, TCommand>(viewId), [viewId])
+  const useViewState = useMemo(() => createViewStateHook<TEvent>(subscribeEvent), [subscribeEvent])
 
   // 初期化と破棄のコマンド発行
   useEffect(
@@ -19,18 +25,18 @@ const useViewModel = <TEvent extends EventPayload, TCommand extends CommandPaylo
     [viewId, viewType, viewIdShared]
   )
 
-  return { dispatch, subscribe, viewId, useViewState }
+  return { dispatchCommand, subscribeEvent, invokeCommand, useViewState, viewId }
 }
 
 const createViewStateHook = <TEvent extends EventPayload>(
-  subscribe: <TName extends TEvent['event']>(
+  subscribeEvent: <TName extends TEvent['event']>(
     eventName: TName,
     callback: (payload: Extract<TEvent, { event: TName }>['payload']) => void
   ) => Unsubscribe
 ) => {
   return function useViewState<TName extends TEvent['event']>(eventName: TName) {
     const [state, setState] = useState<Extract<TEvent, { event: TName }>['payload']>()
-    useEffect(() => subscribe(eventName, setState), [eventName])
+    useEffect(() => subscribeEvent(eventName, setState), [eventName])
     return state
   }
 }

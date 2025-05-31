@@ -14,10 +14,13 @@ public record EventEmptyMessage(string Event)
 {
     public record DummyPayload;
 }
+
+public record EventResultMessage<TPayload>(Guid CommandId, string CommandName, TPayload? Payload)
+    : EventMessage<TPayload>($"receive:{CommandName}", Payload);
 #endregion
 
 #region Actions
-public record CommandMessage(Guid ViewId, string Command, JsonElement? Payload);
+public record CommandMessage(Guid ViewId, Guid? CommandId, string Command, JsonElement? Payload);
 
 [JsonConverter(typeof(JsonStringEnumConverter<AppActionType>))]
 public enum AppActionType

@@ -13,6 +13,11 @@ namespace TryPhotinoMVVM.Constants;
 [JsonSerializable(typeof(InitCommandPayload))]
 #endregion
 
+#region
+[JsonSerializable(typeof(EventResultMessage<MessageBoxResultEvent.ResultType>))]
+[JsonSerializable(typeof(MessageBoxCommand))]
+#endregion
+
 #region Counter
 [JsonSerializable(typeof(EventMessage<CounterStateDto>))]
 [JsonSerializable(typeof(EventMessage<CounterFizzBuzzDto>))]
