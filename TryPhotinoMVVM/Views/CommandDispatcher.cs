@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
+using StrongInject;
 using TryPhotinoMVVM.Constants;
 using TryPhotinoMVVM.Extensions;
 using TryPhotinoMVVM.Messages;
@@ -10,7 +11,7 @@ namespace TryPhotinoMVVM.Views;
 
 public class CommandDispatcher(ILogger<CommandDispatcher> logger, ErrorHandlerService errorHandler)
 {
-    private readonly Dictionary<Guid, IViewModel> _handlerMap = [];
+    private readonly Dictionary<Guid, IOwned<IViewModel>> _handlerMap = [];
     private AppContainer? _container;
 
     public void InjectContainer(AppContainer container) => _container = container;
@@ -26,7 +27,7 @@ public class CommandDispatcher(ILogger<CommandDispatcher> logger, ErrorHandlerSe
         }
         else if (_handlerMap.TryGetValue(message.ViewId, out var viewModel))
         {
-            await HandleDispatchActionAsync(viewModel, message);
+            await HandleDispatchActionAsync(viewModel.Value, message);
         }
     }
 
@@ -65,7 +66,7 @@ public class CommandDispatcher(ILogger<CommandDispatcher> logger, ErrorHandlerSe
                 logger.LogInformation("Registered a view for {Type} (ViewId {ViewId})", type, viewId);
             }
 
-            _handlerMap[viewId].HandleInit();
+            _handlerMap[viewId].Value.HandleInit();
         }
     }
 
