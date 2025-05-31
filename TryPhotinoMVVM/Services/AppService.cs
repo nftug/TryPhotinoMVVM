@@ -43,14 +43,7 @@ public class AppService(
 
     private async void HandleWebMessageReceived(object? sender, string messageJson)
     {
-        try
-        {
-            await dispatcher.DispatchAsync(messageJson);
-        }
-        catch (Exception ex)
-        {
-            errorHandler.HandleError(ex);
-        }
+        await dispatcher.DispatchAsync(messageJson);
     }
 
     private void HandleWindowCreated(object? sender, EventArgs e)

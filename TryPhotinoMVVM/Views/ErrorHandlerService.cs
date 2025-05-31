@@ -5,21 +5,25 @@ using TryPhotinoMVVM.Messages;
 
 namespace TryPhotinoMVVM.Views;
 
-public class ErrorHandlerService(PhotinoWindowInstance window, ILogger<Program> logger)
+public class ErrorHandlerService(
+    PhotinoWindowInstance window, EventDispatcher eventDispatcher, ILogger<Program> logger)
 {
     public void HandleError(Exception exception)
     {
         logger.LogError(exception, "Error!: {Message}", exception.Message);
 
-        /*
-        ErrorMessage payload =
-             exception is ViewModelException vmEx
-             ? new(vmEx.Type, vmEx.Message) : new(null, exception.Message);
-
-        dispatcher.Dispatch(new ErrorEvent(payload), JsonContext.Default.EventMessageErrorMessage);
-        */
-
-        window.Value?.ShowMessage(
-            EnvironmentConstants.AppName, exception.Message, PhotinoDialogButtons.Ok, PhotinoDialogIcon.Error);
+        if (exception is ViewModelException vmException)
+        {
+            var errorEvent = new ViewModelErrorEvent(new(exception.Message))
+            {
+                ViewId = vmException.ViewId
+            };
+            eventDispatcher.Dispatch(errorEvent, JsonContext.Default.EventMessageViewModelError);
+        }
+        else
+        {
+            window.Value?.ShowMessage(
+                EnvironmentConstants.AppName, exception.Message, PhotinoDialogButtons.Ok, PhotinoDialogIcon.Error);
+        }
     }
 }

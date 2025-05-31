@@ -1,3 +1,5 @@
+export type ViewModelTypeName = 'Counter' | 'Error'
+
 export type ViewId = ReturnType<typeof crypto.randomUUID> & { readonly __brand: 'ViewId' }
 
 export type EventMessage<T extends EventPayload> = {
@@ -18,4 +20,12 @@ export type CommandPayload = {
   payload?: unknown
 }
 
-export type ViewModelTypeName = 'Counter' | 'Error'
+// Default events and commands
+export type DefaultEvent = {
+  event: 'error'
+  payload: { message: string }
+}
+
+export type DefaultCommand =
+  | { command: 'init'; payload: { type: ViewModelTypeName } }
+  | { command: 'leave' }

@@ -8,6 +8,7 @@ namespace TryPhotinoMVVM.Constants;
 
 #region Message
 [JsonSerializable(typeof(EventMessage<EventEmptyMessage>))]
+[JsonSerializable(typeof(EventMessage<ViewModelError>))]
 [JsonSerializable(typeof(CommandMessage))]
 [JsonSerializable(typeof(InitCommandPayload))]
 #endregion

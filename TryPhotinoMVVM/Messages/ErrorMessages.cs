@@ -2,18 +2,15 @@ namespace TryPhotinoMVVM.Messages;
 
 public class ViewModelException : Exception
 {
-    public ViewModelType Type { get; }
+    public Guid ViewId { get; }
 
-    public ViewModelException(ViewModelType type, string? message, Exception? innerException = null)
+    public ViewModelException(Guid viewId, string? message, Exception? innerException = null)
         : base(message, innerException)
     {
-        Type = type;
+        ViewId = viewId;
     }
 }
 
-/*
-public record ErrorMessage(ViewModelType? Type, string Message);
+public record ViewModelError(string Message);
 
-public record ErrorEvent(ErrorMessage Payload)
-    : EventMessage<ErrorMessage>(ViewModelType.Error, "error", Payload);
-*/
+public record ViewModelErrorEvent(ViewModelError Payload) : EventMessage<ViewModelError>("error", Payload);

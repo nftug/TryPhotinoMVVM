@@ -8,7 +8,7 @@ using TryPhotinoMVVM.ViewModels.Abstractions;
 
 namespace TryPhotinoMVVM.Views;
 
-public class CommandDispatcher(ILogger<CommandDispatcher> logger)
+public class CommandDispatcher(ILogger<CommandDispatcher> logger, ErrorHandlerService errorHandler)
 {
     private readonly Dictionary<Guid, IViewModel> _handlerMap = [];
     private AppContainer? _container;
@@ -26,7 +26,7 @@ public class CommandDispatcher(ILogger<CommandDispatcher> logger)
         }
         else if (_handlerMap.TryGetValue(message.ViewId, out var viewModel))
         {
-            await viewModel.HandleAsync(message.Command, message.Payload);
+            await HandleDispatchActionAsync(viewModel, message);
         }
     }
 
@@ -66,6 +66,18 @@ public class CommandDispatcher(ILogger<CommandDispatcher> logger)
             }
 
             _handlerMap[viewId].HandleInit();
+        }
+    }
+
+    private async ValueTask HandleDispatchActionAsync(IViewModel viewModel, CommandMessage message)
+    {
+        try
+        {
+            await viewModel.HandleAsync(message.Command, message.Payload);
+        }
+        catch (Exception e)
+        {
+            errorHandler.HandleError(new ViewModelException(message.ViewId, e.Message, e));
         }
     }
 }
