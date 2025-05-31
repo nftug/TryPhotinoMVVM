@@ -14,7 +14,7 @@ public class ErrorHandlerService(
 
         if (exception is ViewModelException vmException)
         {
-            var errorEvent = new ViewModelErrorEvent(new(exception.Message))
+            var errorEvent = new ViewModelErrorEvent(new(exception.Message, exception.ToString()))
             {
                 ViewId = vmException.ViewId
             };

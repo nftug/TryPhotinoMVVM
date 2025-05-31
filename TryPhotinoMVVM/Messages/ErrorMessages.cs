@@ -11,6 +11,6 @@ public class ViewModelException : Exception
     }
 }
 
-public record ViewModelError(string Message);
+public record ViewModelError(string Message, string Details);
 
 public record ViewModelErrorEvent(ViewModelError Payload) : EventMessage<ViewModelError>("error", Payload);

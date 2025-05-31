@@ -20,7 +20,7 @@ public class CommandDispatcher(ILogger<CommandDispatcher> logger, ErrorHandlerSe
         var message = JsonSerializer.Deserialize(json, JsonContext.Default.CommandMessage);
         if (message == null) return;
 
-        if (Enum.TryParse<DefaultActionType>(message.Command, true, out var action))
+        if (Enum.TryParse<AppActionType>(message.Command, true, out var action))
         {
             HandleDefaultAction(message, action);
         }
@@ -30,16 +30,16 @@ public class CommandDispatcher(ILogger<CommandDispatcher> logger, ErrorHandlerSe
         }
     }
 
-    private void HandleDefaultAction(CommandMessage message, DefaultActionType action)
+    private void HandleDefaultAction(CommandMessage message, AppActionType action)
     {
-        if (action == DefaultActionType.Init)
+        if (action == AppActionType.Init)
         {
             var payload = message.Payload?.ParsePayload(JsonContext.Default.InitCommandPayload)
                 ?? throw new InvalidOperationException();
 
             RegisterAndInit(payload.Type, message.ViewId);
         }
-        else if (action == DefaultActionType.Leave)
+        else if (action == AppActionType.Leave)
         {
             if (_handlerMap.TryGetValue(message.ViewId, out var viewModel))
             {

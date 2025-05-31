@@ -19,8 +19,8 @@ public record EventEmptyMessage(string Event)
 #region Actions
 public record CommandMessage(Guid ViewId, string Command, JsonElement? Payload);
 
-[JsonConverter(typeof(JsonStringEnumConverter<DefaultActionType>))]
-public enum DefaultActionType
+[JsonConverter(typeof(JsonStringEnumConverter<AppActionType>))]
+public enum AppActionType
 {
     Init,
     Leave
