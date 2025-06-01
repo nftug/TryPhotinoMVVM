@@ -7,6 +7,7 @@ import {
   CommandMessage,
   EventEnvelope,
   EventMessage,
+  IpcMessenger,
   ViewId,
   ViewModelTypeName
 } from '../types/apiTypes'
@@ -30,6 +31,8 @@ type InitViewOptions = {
   persist?: boolean
 }
 
+let ipcMessenger: IpcMessenger
+
 const eventEmitter = createNanoEvents<Record<EmitterKey, (payload: unknown) => void>>()
 
 const generateEmitterKey = (opts: EmitterKeyOptions | EventMessage) =>
@@ -41,14 +44,16 @@ const generateEmitterKey = (opts: EmitterKeyOptions | EventMessage) =>
     )
     .otherwise(({ viewId, event }) => `state:${viewId}:${camelCase(event)}`)
 
-export const initializeEventHandler = () => {
-  window.external.receiveMessage((json) => {
+export const initializeIpcHandler = (messenger: IpcMessenger) => {
+  ipcMessenger = messenger
+
+  ipcMessenger.receiveMessage((json) => {
     const message = JSON.parse(json) as EventMessage
     eventEmitter.emit(generateEmitterKey(message), message.payload)
   })
 }
 
-export const createEventSubscriber = <TEventEnvelope extends EventEnvelope>(viewId: ViewId) => {
+export const createSubscriber = <TEventEnvelope extends EventEnvelope>(viewId: ViewId) => {
   return <TName extends TEventEnvelope['event']>(
     eventName: TName,
     callback: (payload: Extract<TEventEnvelope, { event: TName }>['payload']) => void
@@ -60,9 +65,7 @@ export const createEventSubscriber = <TEventEnvelope extends EventEnvelope>(view
   }
 }
 
-export const createCommandDispatcher = <TCommandEnvelope extends CommandEnvelope>(
-  viewId: ViewId
-) => {
+export const createDispatcher = <TCommandEnvelope extends CommandEnvelope>(viewId: ViewId) => {
   return <TName extends TCommandEnvelope['command']>(
     commandName: TName,
     ...args: CommandEnvelopeArguments<TCommandEnvelope, TName>
@@ -72,11 +75,11 @@ export const createCommandDispatcher = <TCommandEnvelope extends CommandEnvelope
       command: commandName,
       payload: args[0]
     }
-    window.external.sendMessage(JSON.stringify(message))
+    ipcMessenger.sendMessage(JSON.stringify(message))
   }
 }
 
-export const createCommandInvoker = <
+export const createInvoker = <
   TEventEnvelope extends EventEnvelope,
   TCommandEnvelope extends CommandEnvelope
 >(
@@ -102,14 +105,14 @@ export const createCommandInvoker = <
         unsubscribe()
         resolve(payload)
       })
-      window.external.sendMessage(JSON.stringify(message))
+      ipcMessenger.sendMessage(JSON.stringify(message))
     })
   }
 }
 
 export const initView = ({ viewId, viewType, persist }: InitViewOptions) => {
-  const dispatch = createCommandDispatcher<AppCommandEnvelope>(viewId)
-  const subscribe = createEventSubscriber<AppEventEnvelope>(viewId)
+  const dispatch = createDispatcher<AppCommandEnvelope>(viewId)
+  const subscribe = createSubscriber<AppEventEnvelope>(viewId)
 
   dispatch('init', { type: viewType })
 

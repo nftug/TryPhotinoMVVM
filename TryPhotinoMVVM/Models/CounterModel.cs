@@ -33,13 +33,6 @@ public class CounterModel : DisposableBase
         FizzBuzzReceivedCommand.AddTo(Disposable);
     }
 
-    public void ForceNotify()
-    {
-        _count.ForceNotify();
-        _twiceCount.ForceNotify();
-        _isProcessing.ForceNotify();
-    }
-
     public async Task ChangeCountAsync(long value)
     {
         if (_isProcessing.Value || _count.Value == value) return;

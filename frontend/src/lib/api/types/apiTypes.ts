@@ -1,3 +1,8 @@
+export interface IpcMessenger {
+  sendMessage(message: string): void
+  receiveMessage(callback: (message: string) => void): void
+}
+
 export type ViewModelTypeName = 'Window' | 'Counter'
 
 export type ViewId = ReturnType<typeof crypto.randomUUID> & { readonly __brand: 'ViewId' }
