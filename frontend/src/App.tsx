@@ -7,7 +7,6 @@ import { Box, createTheme, CssBaseline, ThemeProvider } from '@mui/material'
 import { SnackbarProvider } from 'notistack'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { HeaderProvider } from './lib/layout/components/HeaderContext'
-import { mainContainerStyle } from './lib/layout/constants/styles'
 
 const theme = createTheme({ colorSchemes: { dark: true } })
 
@@ -20,17 +19,19 @@ const App = () => {
           anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
           preventDuplicate
         >
-          <HeaderProvider>
-            <TheHeader />
-            <TheDrawer />
-          </HeaderProvider>
+          <Box sx={{ height: '100vh', overflow: 'hidden' }}>
+            <HeaderProvider>
+              <TheHeader />
+              <TheDrawer />
+            </HeaderProvider>
 
-          <Box component="main" sx={mainContainerStyle}>
-            <Routes>
-              <Route index element={<IndexPage />} />
-              <Route path="/about" element={<AboutPage />} />
-              <Route path="/settings" element={<SettingsPage />} />
-            </Routes>
+            <Box component="main" sx={{ height: 1, overflow: 'auto' }}>
+              <Routes>
+                <Route index element={<IndexPage />} />
+                <Route path="/about" element={<AboutPage />} />
+                <Route path="/settings" element={<SettingsPage />} />
+              </Routes>
+            </Box>
           </Box>
         </SnackbarProvider>
       </ThemeProvider>

@@ -8,11 +8,6 @@ export const overflowEllipsisStyle: SxProps<Theme> = {
   maxWidth: 1
 } as const
 
-export const mainContainerStyle: SxProps<Theme> = {
-  height: 'calc(100vh - 64px)',
-  overflow: 'scroll'
-} as const
-
 export const flexCenterStyle: SxProps<Theme> = {
   display: 'flex',
   justifyContent: 'center',
