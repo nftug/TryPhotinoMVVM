@@ -49,19 +49,17 @@ public class WindowViewModel(EventDispatcher eventDispatcher, PhotinoWindowInsta
         var dialogResult = window.ShowMessage(title, command.Message, buttons, icon);
         var commandResult = dialogResult switch
         {
-            PhotinoDialogResult.Ok => MessageBoxResultEvent.ResultType.Ok,
-            PhotinoDialogResult.Cancel => MessageBoxResultEvent.ResultType.Cancel,
-            PhotinoDialogResult.Yes => MessageBoxResultEvent.ResultType.Yes,
-            PhotinoDialogResult.No => MessageBoxResultEvent.ResultType.No,
-            _ => MessageBoxResultEvent.ResultType.Ok
+            PhotinoDialogResult.Ok => MessageBoxResultEvent.MessageBoxResultType.Ok,
+            PhotinoDialogResult.Cancel => MessageBoxResultEvent.MessageBoxResultType.Cancel,
+            PhotinoDialogResult.Yes => MessageBoxResultEvent.MessageBoxResultType.Yes,
+            PhotinoDialogResult.No => MessageBoxResultEvent.MessageBoxResultType.No,
+            _ => MessageBoxResultEvent.MessageBoxResultType.Ok
         };
 
         if (commandId != null)
         {
-            var eventPayload = new MessageBoxResultEvent(commandId.Value, commandResult);
-
-            Dispatch(new(commandId.Value, "messageBox", commandResult),
-                JsonContext.Default.EventResultMessageResultType);
+            var eventPayload = new MessageBoxResultEvent(commandResult, commandId.Value);
+            Dispatch(eventPayload, JsonContext.Default.EventMessageMessageBoxResultType);
         }
     }
 }

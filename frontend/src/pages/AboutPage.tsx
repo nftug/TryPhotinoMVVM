@@ -3,7 +3,7 @@ import { Box, Typography } from '@mui/material'
 
 const AboutPage = () => {
   return (
-    <Box sx={flexCenterStyle} minHeight={1}>
+    <Box sx={flexCenterStyle}>
       <Typography variant="h2" color="textSecondary">
         {import.meta.env.VITE_APP_NAME}
       </Typography>

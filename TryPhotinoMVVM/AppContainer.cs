@@ -1,6 +1,5 @@
 using Microsoft.Extensions.Logging;
 using StrongInject;
-using TryPhotinoMVVM.Extensions;
 using TryPhotinoMVVM.Messages;
 using TryPhotinoMVVM.Models;
 using TryPhotinoMVVM.Services;
@@ -31,8 +30,7 @@ public class CounterModule;
 [RegisterModule(typeof(ConsoleLoggerModule))]
 [RegisterModule(typeof(AppBaseModule))]
 [RegisterModule(typeof(CounterModule))]
-public partial class AppContainer : IContainer<AppService>, IViewModelContainer
-;
+public partial class AppContainer : IContainer<AppService>, IViewModelContainer;
 #endregion
 
 #region ViewModel Container

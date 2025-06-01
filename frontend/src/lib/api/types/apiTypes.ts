@@ -8,13 +8,15 @@ export type CommandId = ReturnType<typeof crypto.randomUUID> & { readonly __bran
 
 export type EventMessage<T extends EventPayload> = {
   viewId: ViewId
-  commandId?: CommandId
 } & T
 
 export type EventPayload = {
   event: string
   payload?: unknown
-}
+} & (
+  | { commandId: CommandId; commandName: string }
+  | { commandId?: undefined; commandName?: undefined }
+)
 
 export type CommandMessage<T extends CommandPayload> = {
   viewId: ViewId

@@ -14,7 +14,7 @@ namespace TryPhotinoMVVM.Constants;
 #endregion
 
 #region
-[JsonSerializable(typeof(EventResultMessage<MessageBoxResultEvent.ResultType>))]
+[JsonSerializable(typeof(EventMessage<MessageBoxResultEvent.MessageBoxResultType>))]
 [JsonSerializable(typeof(MessageBoxCommand))]
 #endregion
 
@@ -24,5 +24,8 @@ namespace TryPhotinoMVVM.Constants;
 [JsonSerializable(typeof(CounterSetActionPayload))]
 #endregion
 
-[JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
+[JsonSourceGenerationOptions(
+    PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase,
+    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+)]
 public partial class JsonContext : JsonSerializerContext;

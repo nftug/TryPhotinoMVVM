@@ -3,11 +3,13 @@ using System.Text.Json.Serialization;
 namespace TryPhotinoMVVM.Messages;
 
 #region Event
-public record MessageBoxResultEvent(Guid CommandId, MessageBoxResultEvent.ResultType Payload)
-    : EventResultMessage<MessageBoxResultEvent.ResultType>(CommandId, "receive:messageBox", Payload)
+public record MessageBoxResultEvent : EventMessage<MessageBoxResultEvent.MessageBoxResultType>
 {
-    [JsonConverter(typeof(JsonStringEnumConverter<ResultType>))]
-    public enum ResultType
+    public MessageBoxResultEvent(MessageBoxResultType payload, Guid commandId)
+        : base(payload, commandId, "messageBox") { }
+
+    [JsonConverter(typeof(JsonStringEnumConverter<MessageBoxResultType>))]
+    public enum MessageBoxResultType
     {
         Ok,
         Cancel,

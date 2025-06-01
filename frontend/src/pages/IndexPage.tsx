@@ -7,20 +7,20 @@ import { useAtomValue } from 'jotai'
 
 const IndexPage = () => {
   const counterViewId = useAtomValue(counterViewIdAtom)
-  const { showMessageBox } = useWindowViewModel()
+  const { invokeCommand, dispatchCommand } = useWindowViewModel()
 
   const handleClickButton = async () => {
-    const dialogResult = await showMessageBox({
+    const dialogResult = await invokeCommand('messageBox', {
       message: 'Press OK or Cancel',
       title: 'Dialog test',
       buttons: 'OkCancel',
       icon: 'Warning'
     })
-    showMessageBox({ message: `You pressed ${dialogResult}` })
+    dispatchCommand('messageBox', { message: `You pressed ${dialogResult}` })
   }
 
   return (
-    <Stack sx={flexCenterStyle} spacing={5} minHeight={1}>
+    <Stack sx={flexCenterStyle} spacing={5}>
       <Typography variant="h3">Vite + React + Photino.NET</Typography>
 
       <Button variant="contained" onClick={handleClickButton}>

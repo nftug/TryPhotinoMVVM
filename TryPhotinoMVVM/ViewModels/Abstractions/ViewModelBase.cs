@@ -20,9 +20,6 @@ public abstract class ViewModelBase<TAction>(EventDispatcher dispatcher) : Dispo
     protected void Dispatch<T>(EventMessage<T> message, JsonTypeInfo<EventMessage<T>> jsonTypeInfo)
         => dispatcher.Dispatch(message with { ViewId = ViewId }, jsonTypeInfo);
 
-    protected void Dispatch<T>(EventResultMessage<T> message, JsonTypeInfo<EventResultMessage<T>> jsonTypeInfo)
-        => dispatcher.Dispatch(message with { ViewId = ViewId }, jsonTypeInfo);
-
     protected abstract ValueTask HandleActionAsync(TAction action, JsonElement? payload, Guid? commandId);
 
     public abstract void HandleInit();

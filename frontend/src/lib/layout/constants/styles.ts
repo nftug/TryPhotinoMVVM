@@ -16,5 +16,6 @@ export const mainContainerStyle: SxProps<Theme> = {
 export const flexCenterStyle: SxProps<Theme> = {
   display: 'flex',
   justifyContent: 'center',
-  alignItems: 'center'
+  alignItems: 'center',
+  minHeight: 1
 } as const
