@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Photino.NET;
 using TryPhotinoMVVM.Constants;
+using TryPhotinoMVVM.Exceptions;
 using TryPhotinoMVVM.Messages;
 
 namespace TryPhotinoMVVM.Views;
@@ -20,10 +21,8 @@ public class ErrorHandlerService(
             };
             eventDispatcher.Dispatch(errorEvent, JsonContext.Default.EventMessageViewModelError);
         }
-        else
-        {
-            window.Value?.ShowMessage(
-                EnvironmentConstants.AppName, exception.Message, PhotinoDialogButtons.Ok, PhotinoDialogIcon.Error);
-        }
+
+        window.Value?.ShowMessage(
+            EnvironmentConstants.AppName, exception.Message, PhotinoDialogButtons.Ok, PhotinoDialogIcon.Error);
     }
 }

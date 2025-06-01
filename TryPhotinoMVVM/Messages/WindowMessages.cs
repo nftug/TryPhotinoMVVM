@@ -25,8 +25,8 @@ public enum WindowCommandType
     MessageBox
 }
 
-public record MessageBoxCommand(
-    string? Title, string Message, MessageBoxCommand.ButtonsType? Buttons, MessageBoxCommand.IconType? Icon)
+public record MessageBoxCommandPayload(
+    string? Title, string Message, MessageBoxCommandPayload.ButtonsType? Buttons, MessageBoxCommandPayload.IconType? Icon)
 {
     [JsonConverter(typeof(JsonStringEnumConverter<ButtonsType>))]
     public enum ButtonsType

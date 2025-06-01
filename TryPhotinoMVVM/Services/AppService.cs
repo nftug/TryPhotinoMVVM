@@ -1,6 +1,5 @@
 using Photino.NET;
 using TryPhotinoMVVM.Constants;
-using TryPhotinoMVVM.Extensions;
 using TryPhotinoMVVM.Utils;
 using TryPhotinoMVVM.Views;
 
@@ -16,16 +15,17 @@ public class AppService(
     {
         _window = new PhotinoWindow();
 
-        string embeddedAppUrlHost = OperatingSystem.IsWindows() ? "http://localhost" : "app://localhost/";
-        string embeddedAppUrl = embeddedAppUrlHost + $"?hash={typeof(Program).Assembly.GetBuildDateHash()}";
-        string appUrl = EnvironmentConstants.IsDebugMode ? "http://localhost:5173/" : embeddedAppUrl;
+        string appUrl =
+            EnvironmentConstants.IsDebugMode ? "http://localhost:5173/"
+            : OperatingSystem.IsWindows() ? "http://localhost" : "app://localhost/";
 
         _window
             .SetTitle(EnvironmentConstants.AppName)
             .SetUseOsDefaultSize(false)
             .SetSize(new(1400, 1024))
             .Center()
-            .SetContextMenuEnabled(!EnvironmentConstants.IsDebugMode)
+            .SetContextMenuEnabled(EnvironmentConstants.IsDebugMode)
+            .SetDevToolsEnabled(EnvironmentConstants.IsDebugMode)
             .LoadRawString($"""<meta http-equiv="refresh" content="0; URL='{appUrl}'" />""")
             .RegisterWebMessageReceivedHandler((_, json) => HandleWebMessageReceived(json, container))
             .RegisterWindowCreatedHandler(HandleWindowCreated)
@@ -33,7 +33,7 @@ public class AppService(
 
         if (!EnvironmentConstants.IsDebugMode)
         {
-            _window.RegisterCustomSchemeHandler(new Uri(embeddedAppUrl).Scheme, AppSchemeHandler.Handle);
+            _window.RegisterCustomSchemeHandler(new Uri(appUrl).Scheme, AppSchemeHandler.Handle);
         }
 
         _window.WaitForClose();

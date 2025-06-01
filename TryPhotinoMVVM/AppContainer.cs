@@ -18,7 +18,7 @@ public class ConsoleLoggerModule;
 [Register(typeof(EventDispatcher), Scope.SingleInstance)]
 [RegisterFactory(typeof(CommandDispatcherFactory), Scope.SingleInstance)]
 [Register(typeof(ErrorHandlerService), Scope.SingleInstance)]
-[Register(typeof(WindowViewModel))]
+[Register(typeof(WindowViewModel), Scope.SingleInstance)]
 public class AppBaseModule;
 
 [Register(typeof(CounterModel))]

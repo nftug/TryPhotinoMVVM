@@ -2,6 +2,7 @@ using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using StrongInject;
 using TryPhotinoMVVM.Constants;
+using TryPhotinoMVVM.Exceptions;
 using TryPhotinoMVVM.Extensions;
 using TryPhotinoMVVM.Messages;
 using TryPhotinoMVVM.ViewModels.Abstractions;
@@ -30,13 +31,20 @@ public class CommandDispatcher(ILogger<CommandDispatcher> logger, ErrorHandlerSe
         var message = JsonSerializer.Deserialize(json, JsonContext.Default.CommandMessage);
         if (message == null) return;
 
-        if (Enum.TryParse<AppActionType>(message.Command, true, out var action))
+        try
         {
-            HandleDefaultAction(message, action, container);
+            if (Enum.TryParse<AppActionType>(message.Command, true, out var action))
+            {
+                HandleDefaultAction(message, action, container);
+            }
+            else if (_handlerMap.TryGetValue(message.ViewId, out var viewModel))
+            {
+                await viewModel.Value.HandleAsync(message);
+            }
         }
-        else if (_handlerMap.TryGetValue(message.ViewId, out var viewModel))
+        catch (Exception e)
         {
-            await HandleDispatchActionAsync(viewModel.Value, message);
+            errorHandler.HandleError(new ViewModelException(message.ViewId, e.Message, e));
         }
     }
 
@@ -68,18 +76,6 @@ public class CommandDispatcher(ILogger<CommandDispatcher> logger, ErrorHandlerSe
 
                 logger.LogInformation("Unregistered a view: ViewId {ViewId}", message.ViewId);
             }
-        }
-    }
-
-    private async ValueTask HandleDispatchActionAsync(IViewModel viewModel, CommandMessage message)
-    {
-        try
-        {
-            await viewModel.HandleAsync(message);
-        }
-        catch (Exception e)
-        {
-            errorHandler.HandleError(new ViewModelException(message.ViewId, e.Message, e));
         }
     }
 }
