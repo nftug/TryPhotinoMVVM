@@ -1,39 +1,17 @@
-import { ViewModelErrorEventResult } from './viewModelError'
-
 export type ViewModelTypeName = 'Window' | 'Counter'
 
 export type ViewId = ReturnType<typeof crypto.randomUUID> & { readonly __brand: 'ViewId' }
 
 export type CommandId = ReturnType<typeof crypto.randomUUID> & { readonly __brand: 'CommandId' }
 
-export type EventMessage<T extends EventPayload> = {
-  viewId: ViewId
-} & T
+export type EventMessage = { viewId: ViewId; commandId?: CommandId } & EventEnvelope
 
-export type EventPayload = {
+export type EventEnvelope = {
   event: string
   payload?: unknown
-} & (
-  | { commandId: CommandId; commandName: string }
-  | { commandId?: undefined; commandName?: undefined }
-)
-
-export type CommandMessage<T extends CommandPayload> = {
-  viewId: ViewId
-  commandId?: CommandId
-} & T
-
-export type CommandPayload = {
-  command: string
-  payload?: unknown
+  commandName?: string
 }
 
-// Default events and commands
-export type AppEvent = {
-  event: 'error'
-  payload: ViewModelErrorEventResult
-}
+export type CommandMessage = { viewId: ViewId; commandId?: CommandId } & CommandEnvelope
 
-export type AppCommand =
-  | { command: 'init'; payload: { type: ViewModelTypeName } }
-  | { command: 'leave' }
+export type CommandEnvelope = { command: string; payload?: unknown }

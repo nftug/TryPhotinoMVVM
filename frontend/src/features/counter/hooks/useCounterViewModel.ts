@@ -1,9 +1,9 @@
 import useViewModel from '@/lib/api/hooks/useViewModel'
 import { ViewId } from '@/lib/api/types/apiTypes'
-import { CounterCommand, CounterEvent } from '../types/counterTypes'
+import { CounterCommandEnvelope, CounterEventEnvelope } from '../types/counterTypes'
 
 export const useCounterViewModel = (viewId?: ViewId) => {
-  const viewModel = useViewModel<CounterEvent, CounterCommand>('Counter', viewId)
+  const viewModel = useViewModel<CounterEventEnvelope, CounterCommandEnvelope>('Counter', viewId)
   const state = viewModel.useViewState('state')
   return { state, ...viewModel }
 }

@@ -8,20 +8,20 @@ namespace TryPhotinoMVVM.Constants;
 
 #region Message
 [JsonSerializable(typeof(EventMessage<EventEmptyMessage>))]
-[JsonSerializable(typeof(EventMessage<ViewModelError>))]
+[JsonSerializable(typeof(EventMessage<ViewModelErrorEvent.ViewModelError>))]
 [JsonSerializable(typeof(CommandMessage))]
 [JsonSerializable(typeof(InitCommandPayload))]
 #endregion
 
 #region
 [JsonSerializable(typeof(EventMessage<MessageBoxResultEvent.MessageBoxResultType>))]
-[JsonSerializable(typeof(MessageBoxCommand))]
+[JsonSerializable(typeof(MessageBoxCommandPayload))]
 #endregion
 
 #region Counter
 [JsonSerializable(typeof(EventMessage<CounterStateDto>))]
 [JsonSerializable(typeof(EventMessage<CounterFizzBuzzDto>))]
-[JsonSerializable(typeof(CounterSetActionPayload))]
+[JsonSerializable(typeof(CounterSetCommandPayload))]
 #endregion
 
 [JsonSourceGenerationOptions(

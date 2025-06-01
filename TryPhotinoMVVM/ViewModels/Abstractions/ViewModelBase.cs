@@ -7,20 +7,20 @@ using TryPhotinoMVVM.Views;
 
 namespace TryPhotinoMVVM.ViewModels.Abstractions;
 
-public abstract class ViewModelBase<TAction>(EventDispatcher dispatcher) : DisposableBase, IViewModel
-    where TAction : struct, Enum
+public abstract class ViewModelBase<TCommandType>(EventDispatcher dispatcher) : DisposableBase, IViewModel
+    where TCommandType : struct, Enum
 {
     protected Guid ViewId { get; private set; }
 
     public ValueTask HandleAsync(CommandMessage message)
-        => Enum.TryParse<TAction>(message.Command, true, out var action)
+        => Enum.TryParse<TCommandType>(message.Command, true, out var action)
             ? HandleActionAsync(action, message.Payload, message.CommandId)
             : ValueTask.CompletedTask;
 
     protected void Dispatch<T>(EventMessage<T> message, JsonTypeInfo<EventMessage<T>> jsonTypeInfo)
         => dispatcher.Dispatch(message with { ViewId = ViewId }, jsonTypeInfo);
 
-    protected abstract ValueTask HandleActionAsync(TAction action, JsonElement? payload, Guid? commandId);
+    protected abstract ValueTask HandleActionAsync(TCommandType action, JsonElement? payload, Guid? commandId);
 
     public abstract void HandleInit();
 

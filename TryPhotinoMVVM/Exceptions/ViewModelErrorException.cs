@@ -1,4 +1,4 @@
-namespace TryPhotinoMVVM.Messages;
+namespace TryPhotinoMVVM.Exceptions;
 
 public class ViewModelException : Exception
 {
@@ -10,7 +10,3 @@ public class ViewModelException : Exception
         ViewId = viewId;
     }
 }
-
-public record ViewModelError(string Message, string Details);
-
-public record ViewModelErrorEvent(ViewModelError Payload) : EventMessage<ViewModelError>("error", Payload);

@@ -17,11 +17,11 @@ public class WindowViewModel(EventDispatcher eventDispatcher, PhotinoWindowInsta
         => (action, payload) switch
         {
             (WindowCommandType.MessageBox, { } p) =>
-                p.HandlePayloadSync(JsonContext.Default.MessageBoxCommand, p => ShowMessageBox(p, commandId)),
+                p.HandlePayloadSync(JsonContext.Default.MessageBoxCommandPayload, p => ShowMessageBox(p, commandId)),
             _ => ValueTask.CompletedTask
         };
 
-    private void ShowMessageBox(MessageBoxCommand command, Guid? commandId)
+    private void ShowMessageBox(MessageBoxCommandPayload command, Guid? commandId)
     {
         if (windowInstance.Value is not { } window)
             throw new InvalidOperationException("Window instance is not ready");
@@ -30,19 +30,19 @@ public class WindowViewModel(EventDispatcher eventDispatcher, PhotinoWindowInsta
 
         var buttons = command.Buttons switch
         {
-            MessageBoxCommand.ButtonsType.Ok => PhotinoDialogButtons.Ok,
-            MessageBoxCommand.ButtonsType.OkCancel => PhotinoDialogButtons.OkCancel,
-            MessageBoxCommand.ButtonsType.YesNo => PhotinoDialogButtons.YesNo,
-            MessageBoxCommand.ButtonsType.YesNoCancel => PhotinoDialogButtons.YesNoCancel,
+            MessageBoxCommandPayload.ButtonsType.Ok => PhotinoDialogButtons.Ok,
+            MessageBoxCommandPayload.ButtonsType.OkCancel => PhotinoDialogButtons.OkCancel,
+            MessageBoxCommandPayload.ButtonsType.YesNo => PhotinoDialogButtons.YesNo,
+            MessageBoxCommandPayload.ButtonsType.YesNoCancel => PhotinoDialogButtons.YesNoCancel,
             _ => PhotinoDialogButtons.Ok,
         };
 
         var icon = command.Icon switch
         {
-            MessageBoxCommand.IconType.Info => PhotinoDialogIcon.Info,
-            MessageBoxCommand.IconType.Warning => PhotinoDialogIcon.Warning,
-            MessageBoxCommand.IconType.Error => PhotinoDialogIcon.Error,
-            MessageBoxCommand.IconType.Question => PhotinoDialogIcon.Question,
+            MessageBoxCommandPayload.IconType.Info => PhotinoDialogIcon.Info,
+            MessageBoxCommandPayload.IconType.Warning => PhotinoDialogIcon.Warning,
+            MessageBoxCommandPayload.IconType.Error => PhotinoDialogIcon.Error,
+            MessageBoxCommandPayload.IconType.Question => PhotinoDialogIcon.Question,
             _ => PhotinoDialogIcon.Info
         };
 

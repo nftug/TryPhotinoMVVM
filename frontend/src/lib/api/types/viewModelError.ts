@@ -1,4 +1,5 @@
 import { ViewId } from './apiTypes'
+import { ViewModelErrorEventResult } from './appTypes'
 
 export class ViewModelError extends Error {
   readonly viewId: ViewId
@@ -15,9 +16,4 @@ export class ViewModelError extends Error {
     this.viewId = viewId
     this.details = details
   }
-}
-
-export type ViewModelErrorEventResult = {
-  message: string
-  details?: string
 }

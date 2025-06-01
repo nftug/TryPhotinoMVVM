@@ -1,6 +1,6 @@
 import useViewModel from '@/lib/api/hooks/useViewModel'
-import { WindowCommand, WindowEvent } from '../types/windowTypes'
+import { WindowCommandEnvelope, WindowEventEnvelope } from '../types/windowTypes'
 
-const useWindowViewModel = () => useViewModel<WindowEvent, WindowCommand>('Window')
+const useWindowViewModel = () => useViewModel<WindowEventEnvelope, WindowCommandEnvelope>('Window')
 
 export default useWindowViewModel

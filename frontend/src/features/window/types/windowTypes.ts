@@ -1,6 +1,4 @@
-import { CommandId } from '@/lib/api/types/apiTypes'
-
-export type WindowCommand = {
+export type WindowCommandEnvelope = {
   command: 'messageBox'
   payload: {
     title?: string
@@ -10,9 +8,8 @@ export type WindowCommand = {
   }
 }
 
-export type WindowEvent = {
+export type WindowEventEnvelope = {
   event: 'receive:messageBox'
   payload: 'Ok' | 'Cancel' | 'Yes' | 'No'
   commandName: 'messageBox'
-  commandId: CommandId
 }

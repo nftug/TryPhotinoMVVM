@@ -12,7 +12,7 @@ using TryPhotinoMVVM.Views;
 
 namespace TryPhotinoMVVM.ViewModels;
 
-public class CounterViewModel : ViewModelBase<CounterActionType>
+public class CounterViewModel : ViewModelBase<CounterCommandType>
 {
     private readonly CounterModel _model;
 
@@ -37,17 +37,17 @@ public class CounterViewModel : ViewModelBase<CounterActionType>
             .AddTo(Disposable);
     }
 
-    protected override ValueTask HandleActionAsync(CounterActionType action, JsonElement? payload, Guid? commandId)
+    protected override ValueTask HandleActionAsync(CounterCommandType action, JsonElement? payload, Guid? commandId)
         => (action, payload) switch
         {
-            (CounterActionType.Set, { } p) => p.HandlePayloadAsync(
-                JsonContext.Default.CounterSetActionPayload, SetCountAsync),
-            (CounterActionType.Increment, _) => SetCountAsync(new(_model.CounterState.Value!.Count + 1)),
-            (CounterActionType.Decrement, _) => SetCountAsync(new(_model.CounterState.Value!.Count - 1)),
+            (CounterCommandType.Set, { } p) => p.HandlePayloadAsync(
+                JsonContext.Default.CounterSetCommandPayload, SetCountAsync),
+            (CounterCommandType.Increment, _) => SetCountAsync(new(_model.CounterState.Value!.Count + 1)),
+            (CounterCommandType.Decrement, _) => SetCountAsync(new(_model.CounterState.Value!.Count - 1)),
             _ => ValueTask.CompletedTask,
         };
 
-    private async ValueTask SetCountAsync(CounterSetActionPayload payload)
+    private async ValueTask SetCountAsync(CounterSetCommandPayload payload)
     {
         await _model.ChangeCountAsync(payload.Value);
     }

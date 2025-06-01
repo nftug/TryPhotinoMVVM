@@ -2,16 +2,15 @@ import { camelCase } from 'change-case'
 import { createNanoEvents } from 'nanoevents'
 import { match, P } from 'ts-pattern'
 import {
-  AppCommand,
-  AppEvent,
+  CommandEnvelope,
   CommandId,
   CommandMessage,
-  CommandPayload,
+  EventEnvelope,
   EventMessage,
-  EventPayload,
   ViewId,
   ViewModelTypeName
 } from '../types/apiTypes'
+import { AppCommandEnvelope, AppEventEnvelope } from '../types/appTypes'
 import { ViewModelError } from '../types/viewModelError'
 
 type EmitterKey = `state:${ViewId}:${string}` | `result:${CommandId}:${string}`
@@ -20,8 +19,10 @@ type EmitterKeyOptions =
   | { viewId: ViewId; event: string }
   | { commandId: CommandId; commandName: string }
 
-type CommandPayloadArguments<TCommand extends CommandPayload, TName extends TCommand['command']> =
-  Extract<TCommand, { command: TName }> extends { payload: infer P } ? [payload: P] : []
+type CommandEnvelopeArguments<
+  TCommandEnvelope extends CommandEnvelope,
+  TName extends TCommandEnvelope['command']
+> = Extract<TCommandEnvelope, { command: TName }> extends { payload: infer P } ? [payload: P] : []
 
 type InitViewOptions = {
   viewId: ViewId
@@ -31,7 +32,7 @@ type InitViewOptions = {
 
 const eventEmitter = createNanoEvents<Record<EmitterKey, (payload: unknown) => void>>()
 
-const generateEmitterKey = (opts: EmitterKeyOptions) =>
+const generateEmitterKey = (opts: EmitterKeyOptions | EventMessage) =>
   match(opts)
     .returnType<EmitterKey>()
     .with(
@@ -42,29 +43,31 @@ const generateEmitterKey = (opts: EmitterKeyOptions) =>
 
 export const initializeEventHandler = () => {
   window.external.receiveMessage((json) => {
-    const message = JSON.parse(json) as EventMessage<EventPayload>
+    const message = JSON.parse(json) as EventMessage
     eventEmitter.emit(generateEmitterKey(message), message.payload)
   })
 }
 
-export const createEventSubscriber = <TEvent extends EventPayload>(viewId: ViewId) => {
-  return <TName extends TEvent['event']>(
+export const createEventSubscriber = <TEventEnvelope extends EventEnvelope>(viewId: ViewId) => {
+  return <TName extends TEventEnvelope['event']>(
     eventName: TName,
-    callback: (payload: Extract<TEvent, { event: TName }>['payload']) => void
+    callback: (payload: Extract<TEventEnvelope, { event: TName }>['payload']) => void
   ) => {
     const key = generateEmitterKey({ viewId, event: eventName })
     return eventEmitter.on(key, (payload) =>
-      callback(payload as Extract<TEvent, { event: TName }>['payload'])
+      callback(payload as Extract<TEventEnvelope, { event: TName }>['payload'])
     )
   }
 }
 
-export const createCommandDispatcher = <TCommand extends CommandPayload>(viewId: ViewId) => {
-  return <TName extends TCommand['command']>(
+export const createCommandDispatcher = <TCommandEnvelope extends CommandEnvelope>(
+  viewId: ViewId
+) => {
+  return <TName extends TCommandEnvelope['command']>(
     commandName: TName,
-    ...args: CommandPayloadArguments<TCommand, TName>
+    ...args: CommandEnvelopeArguments<TCommandEnvelope, TName>
   ) => {
-    const message: CommandMessage<CommandPayload> = {
+    const message: CommandMessage = {
       viewId,
       command: commandName,
       payload: args[0]
@@ -73,24 +76,27 @@ export const createCommandDispatcher = <TCommand extends CommandPayload>(viewId:
   }
 }
 
-export const createCommandInvoker = <TEvent extends EventPayload, TCommand extends CommandPayload>(
+export const createCommandInvoker = <
+  TEventEnvelope extends EventEnvelope,
+  TCommandEnvelope extends CommandEnvelope
+>(
   viewId: ViewId
 ) => {
-  type EventWithCommandName = Extract<TEvent, { commandName: string }>
+  type EventWithCommandName = Extract<TEventEnvelope, { commandName: string }>
 
-  return <TName extends TCommand['command'] & EventWithCommandName['commandName']>(
+  return <TName extends TCommandEnvelope['command'] & EventWithCommandName['commandName']>(
     commandName: TName,
-    ...args: CommandPayloadArguments<TCommand, TName>
-  ): Promise<Extract<TEvent, { commandName: TName }>['payload']> => {
+    ...args: CommandEnvelopeArguments<TCommandEnvelope, TName>
+  ): Promise<Extract<TEventEnvelope, { commandName: TName }>['payload']> => {
     const commandId = crypto.randomUUID() as CommandId
-    const message: CommandMessage<CommandPayload> = {
+    const message: CommandMessage = {
       viewId,
       command: commandName,
       payload: args[0],
       commandId
     }
 
-    return new Promise<Extract<TEvent, { commandName: TName }>['payload']>((resolve) => {
+    return new Promise<Extract<TEventEnvelope, { commandName: TName }>['payload']>((resolve) => {
       const key = generateEmitterKey({ commandName, commandId })
       const unsubscribe = eventEmitter.on(key, (payload) => {
         unsubscribe()
@@ -102,8 +108,8 @@ export const createCommandInvoker = <TEvent extends EventPayload, TCommand exten
 }
 
 export const initView = ({ viewId, viewType, persist }: InitViewOptions) => {
-  const dispatch = createCommandDispatcher<AppCommand>(viewId)
-  const subscribe = createEventSubscriber<AppEvent>(viewId)
+  const dispatch = createCommandDispatcher<AppCommandEnvelope>(viewId)
+  const subscribe = createEventSubscriber<AppEventEnvelope>(viewId)
 
   dispatch('init', { type: viewType })
 

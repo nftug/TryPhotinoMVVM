@@ -16,12 +16,12 @@ public record CounterFizzBuzzEvent(CounterFizzBuzzDto Payload)
 #endregion
 
 #region Actions
-public enum CounterActionType
+public enum CounterCommandType
 {
     Set,
     Increment,
     Decrement
 }
 
-public record CounterSetActionPayload(long Value);
+public record CounterSetCommandPayload(long Value);
 #endregion
