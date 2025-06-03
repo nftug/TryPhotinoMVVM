@@ -11,8 +11,6 @@ namespace TryPhotinoMVVM.ViewModels;
 public class WindowViewModel(EventDispatcher eventDispatcher, PhotinoWindowInstance windowInstance)
     : ViewModelBase<WindowCommandType>(eventDispatcher)
 {
-    public override void HandleInit() { }
-
     protected override ValueTask HandleActionAsync(WindowCommandType action, JsonElement? payload, Guid? commandId)
         => (action, payload) switch
         {

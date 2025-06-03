@@ -1,9 +1,8 @@
-using Reactive.Bindings;
-using Reactive.Bindings.Disposables;
+using R3;
 
 namespace TryPhotinoMVVM.Models.Abstractions;
 
-public abstract class DisposableBase : IDisposable, INotifiableModel
+public abstract class DisposableBase : IDisposable
 {
     protected readonly CompositeDisposable Disposable = new();
 
@@ -18,13 +17,5 @@ public abstract class DisposableBase : IDisposable, INotifiableModel
         Dispose(disposing: true);
         disposedValue = true;
         GC.SuppressFinalize(this);
-    }
-
-    public virtual void ForceNotify()
-    {
-        foreach (var item in this.Disposable.OfType<IReactiveProperty>())
-        {
-            item.ForceNotify();
-        }
     }
 }

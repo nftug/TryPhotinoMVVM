@@ -64,8 +64,6 @@ public class CommandDispatcher(ILogger<CommandDispatcher> logger, ErrorHandlerSe
 
                 logger.LogInformation("Registered a view for {Type}: ViewId {ViewId}", type, message.ViewId);
             }
-
-            _handlerMap[message.ViewId].Value.HandleInit();
         }
         else if (action == AppActionType.Leave)
         {

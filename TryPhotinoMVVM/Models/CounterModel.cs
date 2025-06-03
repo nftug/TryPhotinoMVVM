@@ -1,21 +1,20 @@
-using Reactive.Bindings;
-using Reactive.Bindings.Extensions;
-using Reactive.Bindings.TinyLinq;
+using R3;
 using TryPhotinoMVVM.Domain.Counter;
 using TryPhotinoMVVM.Domain.Enums;
 using TryPhotinoMVVM.Messages;
 using TryPhotinoMVVM.Models.Abstractions;
+using TryPhotinoMVVM.Utils;
 
 namespace TryPhotinoMVVM.Models;
 
 public class CounterModel : DisposableBase
 {
-    private readonly ReactivePropertySlim<long> _count = new();
-    private readonly ReactivePropertySlim<long?> _twiceCount = new();
-    private readonly ReactivePropertySlim<bool> _isProcessing = new();
+    private readonly ReactiveProperty<long> _count = new();
+    private readonly ReactiveProperty<long?> _twiceCount = new();
+    private readonly ReactiveProperty<bool> _isProcessing = new();
 
-    public ReadOnlyReactivePropertySlim<CounterState?> CounterState { get; }
-    public ReactiveCommandSlim<FizzBuzz> FizzBuzzReceivedCommand { get; } = new();
+    public ReadOnlyReactiveProperty<CounterState> CounterState { get; }
+    public ReactiveCommand<FizzBuzz> FizzBuzzReceivedCommand { get; } = new();
 
     public CounterModel()
     {
@@ -27,7 +26,7 @@ public class CounterModel : DisposableBase
             .CombineLatest(_twiceCount, (count, twice) => (count, twice))
             .CombineLatest(_isProcessing, (x, isProcessing) => (x.count, x.twice, isProcessing))
             .Select(x => new CounterState(x.count, x.twice, x.isProcessing))
-            .ToReadOnlyReactivePropertySlim(mode: ReactivePropertyMode.RaiseLatestValueOnSubscribe)
+            .ToReadOnlyReactiveProperty(new(0, null, false))
             .AddTo(Disposable);
 
         FizzBuzzReceivedCommand.AddTo(Disposable);
