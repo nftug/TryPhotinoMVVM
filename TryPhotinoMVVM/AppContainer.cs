@@ -13,6 +13,7 @@ namespace TryPhotinoMVVM;
 [Register(typeof(MinimalLogger<>), typeof(ILogger<>))]
 public class ConsoleLoggerModule;
 
+[Register(typeof(AppContainerInstance), Scope.SingleInstance)]
 [Register(typeof(PhotinoWindowInstance), Scope.SingleInstance)]
 [Register(typeof(AppService), Scope.SingleInstance)]
 [Register(typeof(EventDispatcher), Scope.SingleInstance)]
@@ -40,10 +41,11 @@ public interface IViewModelContainer
 
 #region Factories
 public class CommandDispatcherFactory(
-    ILogger<CommandDispatcher> logger, ErrorHandlerService errorHandler) : IFactory<CommandDispatcher>
+    AppContainerInstance container, ILogger<CommandDispatcher> logger, ErrorHandlerService errorHandler)
+    : IFactory<CommandDispatcher>
 {
     public CommandDispatcher Create() =>
-        new CommandDispatcher(logger, errorHandler)
+        new CommandDispatcher(container, logger, errorHandler)
             .Register<CounterViewModel>(ViewModelType.Counter)
             .Register<WindowViewModel>(ViewModelType.Window);
 }

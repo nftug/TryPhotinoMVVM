@@ -37,4 +37,6 @@ public abstract class ViewModelBase<TCommandType> : DisposableBase, IViewModel
     protected abstract ValueTask HandleActionAsync(TCommandType action, JsonElement? payload, Guid? commandId);
 
     public void SetViewId(Guid viewId) => _viewId.Value = viewId;
+
+    public virtual void OnFirstRender() { }
 }

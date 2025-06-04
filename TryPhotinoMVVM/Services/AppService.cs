@@ -6,13 +6,19 @@ using TryPhotinoMVVM.Views;
 namespace TryPhotinoMVVM.Services;
 
 public class AppService(
-    PhotinoWindowInstance windowInstance, CommandDispatcher dispatcher, ErrorHandlerService errorHandler)
+    AppContainerInstance containerInstance,
+    PhotinoWindowInstance windowInstance,
+    CommandDispatcher dispatcher,
+    ErrorHandlerService errorHandler
+)
 {
     private bool? _isClosing;
     private PhotinoWindow _window = null!;
 
     public void Run(AppContainer container)
     {
+        containerInstance.Inject(container);
+
         _window = new PhotinoWindow();
 
         string appUrl =
@@ -27,7 +33,7 @@ public class AppService(
             .SetContextMenuEnabled(EnvironmentConstants.IsDebugMode)
             .SetDevToolsEnabled(EnvironmentConstants.IsDebugMode)
             .LoadRawString($"""<meta http-equiv="refresh" content="0; URL='{appUrl}'" />""")
-            .RegisterWebMessageReceivedHandler((_, json) => HandleWebMessageReceived(json, container))
+            .RegisterWebMessageReceivedHandler(HandleWebMessageReceived)
             .RegisterWindowCreatedHandler(HandleWindowCreated)
             .RegisterWindowClosingHandler(HandleWindowClosing);
 
@@ -39,9 +45,9 @@ public class AppService(
         _window.WaitForClose();
     }
 
-    private async void HandleWebMessageReceived(string messageJson, AppContainer container)
+    private async void HandleWebMessageReceived(object? sedner, string messageJson)
     {
-        await dispatcher.DispatchAsync(messageJson, container);
+        await dispatcher.DispatchAsync(messageJson);
     }
 
     private void HandleWindowCreated(object? sender, EventArgs e)
