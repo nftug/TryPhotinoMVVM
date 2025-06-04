@@ -1,4 +1,3 @@
-import { DrawerContext, DrawerDispatchContext } from '@/lib/layout/components/HeaderContext'
 import { Home, Info, Settings } from '@mui/icons-material'
 import {
   Box,
@@ -11,6 +10,7 @@ import {
 } from '@mui/material'
 import { useContext } from 'react'
 import { Link } from 'react-router-dom'
+import { DrawerContext, DrawerDispatchContext } from '../contexts/DrawerContext'
 
 type DrawerItem = {
   name: string

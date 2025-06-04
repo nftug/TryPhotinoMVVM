@@ -1,27 +1,24 @@
-import { Unsubscribe } from 'nanoevents'
+import type { Unsubscribe } from 'nanoevents'
 import { useEffect, useMemo, useState } from 'react'
 import { createDispatcher, createInvoker, createSubscriber, initView } from '../handlers/ipcHandler'
 import type { CommandEnvelope, EventEnvelope, ViewId, ViewModelTypeName } from '../types/apiTypes'
 
-const useViewModel = <
-  TEventEnvelope extends EventEnvelope,
-  TCommandEnvelope extends CommandEnvelope
->(
-  viewType: ViewModelTypeName,
-  viewIdShared?: ViewId
-) => {
-  const viewId = useMemo(() => viewIdShared ?? (crypto.randomUUID() as ViewId), [viewIdShared])
+export type ViewModel<TEvent extends EventEnvelope, TCommand extends CommandEnvelope> = ReturnType<
+  typeof useViewModel<TEvent, TCommand>
+>
 
-  const dispatch = useMemo(() => createDispatcher<TCommandEnvelope>(viewId), [viewId])
-  const subscribe = useMemo(() => createSubscriber<TEventEnvelope>(viewId), [viewId])
-  const invoke = useMemo(() => createInvoker<TEventEnvelope, TCommandEnvelope>(viewId), [viewId])
-  const useViewState = useMemo(() => createViewStateHook<TEventEnvelope>(subscribe), [subscribe])
+const useViewModel = <TEvent extends EventEnvelope, TCommand extends CommandEnvelope>(
+  viewType: ViewModelTypeName
+) => {
+  const viewId = useMemo(() => crypto.randomUUID() as ViewId, [])
+
+  const dispatch = useMemo(() => createDispatcher<TCommand>(viewId), [viewId])
+  const subscribe = useMemo(() => createSubscriber<TEvent>(viewId), [viewId])
+  const invoke = useMemo(() => createInvoker<TEvent, TCommand>(viewId), [viewId])
+  const useViewState = useMemo(() => createViewStateHook<TEvent>(subscribe), [subscribe])
 
   // 初期化と破棄のコマンド発行
-  useEffect(
-    () => initView({ viewId, viewType, persist: !!viewIdShared }),
-    [viewId, viewType, viewIdShared]
-  )
+  useEffect(() => initView(viewId, viewType), [viewId, viewType])
 
   return { dispatch, subscribe, invoke, useViewState, viewId }
 }

@@ -1,7 +1,7 @@
-import { DrawerDispatchContext } from '@/lib/layout/components/HeaderContext'
 import MenuIcon from '@mui/icons-material/Menu'
 import { AppBar, IconButton, Stack, Toolbar, Typography } from '@mui/material'
 import { useContext } from 'react'
+import { DrawerDispatchContext } from '../contexts/DrawerContext'
 import { useActionElementRef } from '../stores/portalAtom'
 
 const TheHeader = () => {
