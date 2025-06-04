@@ -125,8 +125,12 @@ export const initView = (viewId: ViewId, viewType: ViewModelTypeName) => {
     console.error(error.details)
   })
 
+  const handleVisibilityChange = () => dispatch('leave')
+  window.addEventListener('visibilitychange', handleVisibilityChange)
+
   return () => {
     dispatch('leave')
     disposeErrorLogger()
+    window.removeEventListener('visibilitychange', handleVisibilityChange)
   }
 }
