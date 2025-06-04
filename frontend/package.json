@@ -16,6 +16,7 @@
     "@mui/material": "^7.1.0",
     "change-case": "^5.4.4",
     "jotai": "^2.12.4",
+    "jotai-scope": "^0.7.3",
     "nanoevents": "^9.1.0",
     "notistack": "^3.0.2",
     "react": "^19.0.0",

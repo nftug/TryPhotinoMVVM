@@ -1,24 +1,20 @@
 import Counter from '@/features/counter/components/Counter'
-import { CounterViewModelProvider } from '@/features/counter/providers/CounterViewModelProvider'
-import {
-  useCounterViewModelContext,
-  useGlobalCounterViewModelContext
-} from '@/features/counter/providers/useCounterViewModelContext'
-import useWindowViewModel from '@/features/window/hooks/useWindowViewModel'
+import CounterViewModelScopedProvider from '@/features/counter/providers/CounterViewModelScopedProvider'
+import { useWindowViewModel } from '@/features/window/atoms/windowViewModelAtoms'
 import { flexCenterStyle } from '@/lib/layout/constants/styles'
 import { Button, Stack, Typography } from '@mui/material'
 
 const IndexPage = () => {
-  const { invoke, dispatch } = useWindowViewModel()
+  const window = useWindowViewModel()
 
   const handleClickButton = async () => {
-    const dialogResult = await invoke('messageBox', {
+    const dialogResult = await window?.invoke('messageBox', {
       message: 'Press OK or Cancel',
       title: 'Dialog test',
       buttons: 'OkCancel',
       icon: 'Warning'
     })
-    dispatch('messageBox', { message: `You pressed ${dialogResult}` })
+    window?.dispatch('messageBox', { message: `You pressed ${dialogResult}` })
   }
 
   return (
@@ -29,11 +25,11 @@ const IndexPage = () => {
         Click me!
       </Button>
 
-      <CounterViewModelProvider>
-        <Counter useCounterViewModel={useCounterViewModelContext} />
-      </CounterViewModelProvider>
+      <CounterViewModelScopedProvider>
+        <Counter />
+      </CounterViewModelScopedProvider>
 
-      <Counter useCounterViewModel={useGlobalCounterViewModelContext} />
+      <Counter />
 
       <Typography variant="body1" color="textSecondary">
         The count values come from the C# side.

@@ -1,16 +1,19 @@
+import { useWindowViewModel } from '@/features/window/atoms/windowViewModelAtoms'
 import { flexCenterStyle } from '@/lib/layout/constants/styles'
 import { Box, Button, Stack, TextField, Typography } from '@mui/material'
 import { useSnackbar } from 'notistack'
 import { useEffect, useRef } from 'react'
 import { match, P } from 'ts-pattern'
-import { UseCounterViewModelContext } from '../providers/useCounterViewModelContext'
+import { CounterViewModel, useCounterViewModel } from '../atoms/counterViewModelAtom'
 
-type Props = {
-  useCounterViewModel: UseCounterViewModelContext
+const Counter = () => {
+  const viewModel = useCounterViewModel()
+  return viewModel && <CounterInternal viewModel={viewModel} />
 }
 
-const Counter = ({ useCounterViewModel }: Props) => {
-  const { dispatch, subscribe, state } = useCounterViewModel()
+const CounterInternal = ({ viewModel }: { viewModel: CounterViewModel }) => {
+  const { state, dispatch, subscribe } = viewModel
+  const window = useWindowViewModel()
 
   const { enqueueSnackbar } = useSnackbar()
   const inputRef = useRef<HTMLInputElement>(null)
@@ -23,8 +26,12 @@ const Counter = ({ useCounterViewModel }: Props) => {
   useEffect(() => {
     return subscribe('fizzBuzz', ({ result }) => {
       enqueueSnackbar(result, { autoHideDuration: 1500 })
+
+      if (result === 'FizzBuzz') {
+        window?.dispatch('messageBox', { message: result })
+      }
     })
-  }, [enqueueSnackbar, subscribe])
+  }, [enqueueSnackbar, subscribe, window])
 
   if (!state) return null
 
