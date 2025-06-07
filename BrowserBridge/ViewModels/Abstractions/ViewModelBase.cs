@@ -27,6 +27,9 @@ public abstract class ViewModelBase<TCommandType> : DisposableBase, IViewModel
     protected Observable<T> NotifyObservable<T>(Observable<T> observable)
         => _viewId.Where(v => v != default).CombineLatest(observable, (_, v) => v);
 
+    protected void Dispatch<T>(EventMessage<T> message)
+        => _dispatcher.Dispatch(message with { ViewId = _viewId.Value });
+
     protected void Dispatch<T>(EventMessage<T> message, JsonTypeInfo<EventMessage<T>> jsonTypeInfo)
         => _dispatcher.Dispatch(message with { ViewId = _viewId.Value }, jsonTypeInfo);
 

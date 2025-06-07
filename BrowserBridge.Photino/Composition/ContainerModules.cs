@@ -13,7 +13,7 @@ public class BridgeContainerModule;
 [Register(typeof(AppContainerInstance), Scope.SingleInstance)]
 [Register(typeof(PhotinoWindowInstance), Scope.SingleInstance)]
 [Register(typeof(PhotinoDialogService), typeof(IDialogService))]
-[Register(typeof(PhotinoEventDispatcher), Scope.SingleInstance, typeof(IEventDispatcher))]
+[Register(typeof(EventDispatcher), Scope.SingleInstance, typeof(IEventDispatcher))]
 public class PhotinoContainerModule;
 
 [Register(typeof(ConsoleLogWriter), typeof(ILogWriter))]

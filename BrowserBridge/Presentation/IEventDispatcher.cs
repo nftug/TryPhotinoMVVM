@@ -8,4 +8,6 @@ public interface IEventDispatcher
         EventMessage<TPayload> message,
         JsonTypeInfo<EventMessage<TPayload>> jsonTypeInfo
     );
+
+    void Dispatch<TPayload>(EventMessage<TPayload> message);
 }
