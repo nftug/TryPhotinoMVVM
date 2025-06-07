@@ -1,7 +1,7 @@
+using BrowserBridge;
 using R3;
 using TryPhotinoMVVM.Domain.Counter.Entities;
 using TryPhotinoMVVM.Domain.Counter.Enums;
-using TryPhotinoMVVM.Models.Abstractions;
 
 namespace TryPhotinoMVVM.Models;
 

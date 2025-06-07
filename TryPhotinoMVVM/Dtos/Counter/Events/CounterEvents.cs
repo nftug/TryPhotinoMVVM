@@ -1,5 +1,5 @@
+using BrowserBridge;
 using TryPhotinoMVVM.Domain.Counter.Enums;
-using TryPhotinoMVVM.Dtos.Abstractions.Events;
 
 namespace TryPhotinoMVVM.Dtos.Counter.Events;
 

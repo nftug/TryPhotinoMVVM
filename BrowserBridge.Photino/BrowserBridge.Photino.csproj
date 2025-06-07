@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Photino.NET" Version="4.0.16" />
+    <PackageReference Include="StrongInject" Version="1.4.5-CI-20220524-023137" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BrowserBridge\BrowserBridge.csproj" />
+  </ItemGroup>
+
+</Project>

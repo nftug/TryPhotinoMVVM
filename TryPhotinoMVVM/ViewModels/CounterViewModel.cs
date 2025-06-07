@@ -1,13 +1,11 @@
 using System.Text.Json;
+using BrowserBridge;
 using Microsoft.Extensions.Logging;
 using R3;
 using TryPhotinoMVVM.Constants;
 using TryPhotinoMVVM.Dtos.Counter.Commands;
 using TryPhotinoMVVM.Dtos.Counter.Events;
-using TryPhotinoMVVM.Extensions;
 using TryPhotinoMVVM.Models;
-using TryPhotinoMVVM.Presentation.Dispatchers;
-using TryPhotinoMVVM.ViewModels.Abstractions;
 
 namespace TryPhotinoMVVM.ViewModels;
 
@@ -16,7 +14,7 @@ public class CounterViewModel : ViewModelBase<CounterCommandType>
     private readonly CounterModel _model;
 
     public CounterViewModel(
-        EventDispatcher dispatcher, CounterModel model, ILogger<CounterViewModel> logger) : base(dispatcher)
+        IEventDispatcher dispatcher, CounterModel model, ILogger<CounterViewModel> logger) : base(dispatcher)
     {
         _model = model;
 

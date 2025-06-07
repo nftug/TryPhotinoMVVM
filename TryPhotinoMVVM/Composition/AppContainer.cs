@@ -1,27 +1,17 @@
-using Microsoft.Extensions.Logging;
+using BrowserBridge;
+using BrowserBridge.Photino;
 using StrongInject;
-using TryPhotinoMVVM.Composition;
-using TryPhotinoMVVM.Enums;
 using TryPhotinoMVVM.Models;
 using TryPhotinoMVVM.Presentation;
-using TryPhotinoMVVM.Presentation.Dispatchers;
 using TryPhotinoMVVM.ViewModels;
 
 namespace TryPhotinoMVVM.Composition;
 
 #region Modules
-[Register(typeof(ConsoleLogWriter), typeof(ILogWriter))]
-[Register(typeof(MinimalLogger<>), typeof(ILogger<>))]
-public class ConsoleLoggerModule;
-
-[Register(typeof(AppContainerInstance), Scope.SingleInstance)]
-[Register(typeof(PhotinoWindowInstance), Scope.SingleInstance)]
+[RegisterModule(typeof(PhotinoContainerModule))]
+[RegisterModule(typeof(MinimalLoggerModule))]
 [Register(typeof(AppService), Scope.SingleInstance)]
-[Register(typeof(AppSchemeHandler), Scope.SingleInstance)]
-[Register(typeof(EventDispatcher), Scope.SingleInstance)]
-[RegisterFactory(typeof(CommandDispatcherFactory), Scope.SingleInstance)]
-[Register(typeof(ErrorHandlerService), Scope.SingleInstance)]
-[Register(typeof(WindowViewModel))]
+[RegisterFactory(typeof(ViewModelResolverFactory), Scope.SingleInstance)]
 public class AppBaseModule;
 
 [Register(typeof(CounterModel))]
@@ -30,7 +20,6 @@ public class CounterModule;
 #endregion
 
 #region Container
-[RegisterModule(typeof(ConsoleLoggerModule))]
 [RegisterModule(typeof(AppBaseModule))]
 [RegisterModule(typeof(CounterModule))]
 public partial class AppContainer : IContainer<AppService>, IViewModelContainer;
@@ -38,17 +27,13 @@ public partial class AppContainer : IContainer<AppService>, IViewModelContainer;
 
 #region ViewModel Container
 public interface IViewModelContainer
-    : IContainer<CounterViewModel>, IContainer<WindowViewModel>;
+    : IViewModelContainerBase, IContainer<CounterViewModel>;
 #endregion
 
 #region Factories
-public class CommandDispatcherFactory(
-    AppContainerInstance container, ILogger<CommandDispatcher> logger, ErrorHandlerService errorHandler)
-    : IFactory<CommandDispatcher>
+public class ViewModelResolverFactory(AppContainerInstance container) : ViewModelResolverFactoryBase(container)
 {
-    public CommandDispatcher Create() =>
-        new CommandDispatcher(container, logger, errorHandler)
-            .Register<CounterViewModel>(ViewModelType.Counter)
-            .Register<WindowViewModel>(ViewModelType.Window);
+    protected override IViewModelResolver RegisterViewModels(IViewModelResolver factory)
+        => factory.Register<CounterViewModel>("Counter");
 }
 #endregion
