@@ -1,10 +1,11 @@
 using Microsoft.Extensions.Logging;
 using Photino.NET;
 using TryPhotinoMVVM.Constants;
+using TryPhotinoMVVM.Dtos.Application.Events;
 using TryPhotinoMVVM.Exceptions;
-using TryPhotinoMVVM.Messages;
+using TryPhotinoMVVM.Presentation.Dispatchers;
 
-namespace TryPhotinoMVVM.Views;
+namespace TryPhotinoMVVM.Presentation;
 
 public class ErrorHandlerService(
     PhotinoWindowInstance window, EventDispatcher eventDispatcher, ILogger<Program> logger)

@@ -1,6 +1,6 @@
 using StrongInject;
 
-namespace TryPhotinoMVVM.Services;
+namespace TryPhotinoMVVM.Composition;
 
 public class AppContainerInstance
 {

@@ -1,6 +1,6 @@
 using Photino.NET;
 
-namespace TryPhotinoMVVM.Views;
+namespace TryPhotinoMVVM.Presentation;
 
 public class PhotinoWindowInstance
 {

@@ -3,14 +3,14 @@ using System.Reflection;
 using System.Text;
 using Microsoft.Extensions.FileProviders;
 
-namespace TryPhotinoMVVM.Utils;
+namespace TryPhotinoMVVM.Presentation;
 
-public static class AppSchemeHandler
+public class AppSchemeHandler
 {
     private static readonly Assembly _assembly = typeof(Program).Assembly;
     public static readonly EmbeddedFileProvider FileProvider = new(_assembly, $"{_assembly.GetName().Name}.wwwroot");
 
-    public static Stream Handle(object sender, string scheme, string urlString, out string contentType)
+    public Stream Handle(object sender, string scheme, string urlString, out string contentType)
     {
         var uri = new Uri(urlString);
         string path = uri.LocalPath;

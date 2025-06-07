@@ -1,8 +1,8 @@
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
-using TryPhotinoMVVM.Messages;
+using TryPhotinoMVVM.Dtos.Abstractions.Events;
 
-namespace TryPhotinoMVVM.Views;
+namespace TryPhotinoMVVM.Presentation.Dispatchers;
 
 public class EventDispatcher(PhotinoWindowInstance _window)
 {

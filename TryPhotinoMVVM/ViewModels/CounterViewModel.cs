@@ -2,12 +2,12 @@ using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using R3;
 using TryPhotinoMVVM.Constants;
-using TryPhotinoMVVM.Domain.Counter;
+using TryPhotinoMVVM.Dtos.Counter.Commands;
+using TryPhotinoMVVM.Dtos.Counter.Events;
 using TryPhotinoMVVM.Extensions;
-using TryPhotinoMVVM.Messages;
 using TryPhotinoMVVM.Models;
+using TryPhotinoMVVM.Presentation.Dispatchers;
 using TryPhotinoMVVM.ViewModels.Abstractions;
-using TryPhotinoMVVM.Views;
 
 namespace TryPhotinoMVVM.ViewModels;
 

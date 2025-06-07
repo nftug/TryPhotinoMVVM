@@ -2,9 +2,10 @@ using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
 using R3;
 using TryPhotinoMVVM.Constants;
-using TryPhotinoMVVM.Messages;
+using TryPhotinoMVVM.Dtos.Abstractions.Commands;
+using TryPhotinoMVVM.Dtos.Abstractions.Events;
 using TryPhotinoMVVM.Models.Abstractions;
-using TryPhotinoMVVM.Views;
+using TryPhotinoMVVM.Presentation.Dispatchers;
 
 namespace TryPhotinoMVVM.ViewModels.Abstractions;
 

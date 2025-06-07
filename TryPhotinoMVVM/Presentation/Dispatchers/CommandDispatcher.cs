@@ -1,14 +1,17 @@
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using StrongInject;
+using TryPhotinoMVVM.Composition;
 using TryPhotinoMVVM.Constants;
+using TryPhotinoMVVM.Dtos.Abstractions.Commands;
+using TryPhotinoMVVM.Dtos.Abstractions.Events;
+using TryPhotinoMVVM.Dtos.Application.Commands;
+using TryPhotinoMVVM.Enums;
 using TryPhotinoMVVM.Exceptions;
 using TryPhotinoMVVM.Extensions;
-using TryPhotinoMVVM.Messages;
-using TryPhotinoMVVM.Services;
 using TryPhotinoMVVM.ViewModels.Abstractions;
 
-namespace TryPhotinoMVVM.Views;
+namespace TryPhotinoMVVM.Presentation.Dispatchers;
 
 public class CommandDispatcher(
     AppContainerInstance container, ILogger<CommandDispatcher> logger, ErrorHandlerService errorHandler)

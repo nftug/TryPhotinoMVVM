@@ -1,12 +1,13 @@
 using Microsoft.Extensions.Logging;
 using StrongInject;
-using TryPhotinoMVVM.Messages;
+using TryPhotinoMVVM.Composition;
+using TryPhotinoMVVM.Enums;
 using TryPhotinoMVVM.Models;
-using TryPhotinoMVVM.Services;
+using TryPhotinoMVVM.Presentation;
+using TryPhotinoMVVM.Presentation.Dispatchers;
 using TryPhotinoMVVM.ViewModels;
-using TryPhotinoMVVM.Views;
 
-namespace TryPhotinoMVVM;
+namespace TryPhotinoMVVM.Composition;
 
 #region Modules
 [Register(typeof(ConsoleLogWriter), typeof(ILogWriter))]
@@ -16,10 +17,11 @@ public class ConsoleLoggerModule;
 [Register(typeof(AppContainerInstance), Scope.SingleInstance)]
 [Register(typeof(PhotinoWindowInstance), Scope.SingleInstance)]
 [Register(typeof(AppService), Scope.SingleInstance)]
+[Register(typeof(AppSchemeHandler), Scope.SingleInstance)]
 [Register(typeof(EventDispatcher), Scope.SingleInstance)]
 [RegisterFactory(typeof(CommandDispatcherFactory), Scope.SingleInstance)]
 [Register(typeof(ErrorHandlerService), Scope.SingleInstance)]
-[Register(typeof(WindowViewModel), Scope.SingleInstance)]
+[Register(typeof(WindowViewModel))]
 public class AppBaseModule;
 
 [Register(typeof(CounterModel))]

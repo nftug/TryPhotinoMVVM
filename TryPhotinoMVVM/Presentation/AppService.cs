@@ -1,15 +1,16 @@
 using Photino.NET;
+using TryPhotinoMVVM.Composition;
 using TryPhotinoMVVM.Constants;
-using TryPhotinoMVVM.Utils;
-using TryPhotinoMVVM.Views;
+using TryPhotinoMVVM.Presentation.Dispatchers;
 
-namespace TryPhotinoMVVM.Services;
+namespace TryPhotinoMVVM.Presentation;
 
 public class AppService(
     AppContainerInstance containerInstance,
     PhotinoWindowInstance windowInstance,
     CommandDispatcher dispatcher,
-    ErrorHandlerService errorHandler
+    ErrorHandlerService errorHandler,
+    AppSchemeHandler appSchemeHandler
 )
 {
     private bool? _isClosing;
@@ -39,13 +40,13 @@ public class AppService(
 
         if (!EnvironmentConstants.IsDebugMode)
         {
-            _window.RegisterCustomSchemeHandler(new Uri(appUrl).Scheme, AppSchemeHandler.Handle);
+            _window.RegisterCustomSchemeHandler(new Uri(appUrl).Scheme, appSchemeHandler.Handle);
         }
 
         _window.WaitForClose();
     }
 
-    private async void HandleWebMessageReceived(object? sedner, string messageJson)
+    private async void HandleWebMessageReceived(object? sender, string messageJson)
     {
         await dispatcher.DispatchAsync(messageJson);
     }

@@ -1,13 +1,15 @@
 using System.Text.Json.Serialization;
-using TryPhotinoMVVM.Domain.Counter;
-using TryPhotinoMVVM.Domain.Enums;
-using TryPhotinoMVVM.Dtos;
-using TryPhotinoMVVM.Messages;
+using TryPhotinoMVVM.Dtos.Abstractions.Commands;
+using TryPhotinoMVVM.Dtos.Abstractions.Events;
+using TryPhotinoMVVM.Dtos.Application.Commands;
+using TryPhotinoMVVM.Dtos.Application.Events;
+using TryPhotinoMVVM.Dtos.Counter.Commands;
+using TryPhotinoMVVM.Dtos.Counter.Events;
 
 namespace TryPhotinoMVVM.Constants;
 
 #region Message
-[JsonSerializable(typeof(EventMessage<EventEmptyMessage>))]
+[JsonSerializable(typeof(EventMessage<DummyEventPayload>))]
 [JsonSerializable(typeof(EventMessage<ViewModelErrorEvent.ViewModelError>))]
 [JsonSerializable(typeof(CommandMessage))]
 [JsonSerializable(typeof(InitCommandPayload))]
@@ -25,7 +27,6 @@ namespace TryPhotinoMVVM.Constants;
 #endregion
 
 [JsonSourceGenerationOptions(
-    PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase,
-    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+    PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase
 )]
 public partial class JsonContext : JsonSerializerContext;

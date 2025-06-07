@@ -1,9 +1,7 @@
 using R3;
-using TryPhotinoMVVM.Domain.Counter;
-using TryPhotinoMVVM.Domain.Enums;
-using TryPhotinoMVVM.Messages;
+using TryPhotinoMVVM.Domain.Counter.Entities;
+using TryPhotinoMVVM.Domain.Counter.Enums;
 using TryPhotinoMVVM.Models.Abstractions;
-using TryPhotinoMVVM.Utils;
 
 namespace TryPhotinoMVVM.Models;
 

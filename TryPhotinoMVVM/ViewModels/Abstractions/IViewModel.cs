@@ -1,5 +1,5 @@
 using System.Text.Json;
-using TryPhotinoMVVM.Messages;
+using TryPhotinoMVVM.Dtos.Abstractions.Commands;
 
 namespace TryPhotinoMVVM.ViewModels.Abstractions;
 

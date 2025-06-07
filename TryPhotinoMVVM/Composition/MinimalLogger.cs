@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 
-namespace TryPhotinoMVVM.Services;
+namespace TryPhotinoMVVM.Composition;
 
 public interface ILogWriter
 {

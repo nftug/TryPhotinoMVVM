@@ -1,10 +1,12 @@
 using System.Text.Json;
 using Photino.NET;
 using TryPhotinoMVVM.Constants;
+using TryPhotinoMVVM.Dtos.Application.Commands;
+using TryPhotinoMVVM.Dtos.Application.Events;
 using TryPhotinoMVVM.Extensions;
-using TryPhotinoMVVM.Messages;
+using TryPhotinoMVVM.Presentation;
+using TryPhotinoMVVM.Presentation.Dispatchers;
 using TryPhotinoMVVM.ViewModels.Abstractions;
-using TryPhotinoMVVM.Views;
 
 namespace TryPhotinoMVVM.ViewModels;
 

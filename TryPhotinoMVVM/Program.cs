@@ -1,4 +1,5 @@
-﻿using TryPhotinoMVVM.Services;
+﻿using TryPhotinoMVVM.Composition;
+using TryPhotinoMVVM.Presentation;
 
 namespace TryPhotinoMVVM;
 

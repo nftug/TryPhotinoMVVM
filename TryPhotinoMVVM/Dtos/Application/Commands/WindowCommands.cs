@@ -1,25 +1,7 @@
 using System.Text.Json.Serialization;
 
-namespace TryPhotinoMVVM.Messages;
+namespace TryPhotinoMVVM.Dtos.Application.Commands;
 
-#region Event
-public record MessageBoxResultEvent : EventMessage<MessageBoxResultEvent.MessageBoxResultType>
-{
-    public MessageBoxResultEvent(MessageBoxResultType payload, Guid commandId)
-        : base(payload, commandId, "messageBox") { }
-
-    [JsonConverter(typeof(JsonStringEnumConverter<MessageBoxResultType>))]
-    public enum MessageBoxResultType
-    {
-        Ok,
-        Cancel,
-        Yes,
-        No
-    }
-}
-#endregion
-
-#region Command
 public enum WindowCommandType
 {
     MessageBox
@@ -46,4 +28,3 @@ public record MessageBoxCommandPayload(
         Question
     }
 }
-#endregion

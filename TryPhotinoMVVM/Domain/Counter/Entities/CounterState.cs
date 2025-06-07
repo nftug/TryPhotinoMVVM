@@ -1,6 +1,6 @@
-using TryPhotinoMVVM.Dtos;
+using TryPhotinoMVVM.Dtos.Counter.Events;
 
-namespace TryPhotinoMVVM.Domain.Counter;
+namespace TryPhotinoMVVM.Domain.Counter.Entities;
 
 public class CounterState(long count, long? twiceCount, bool isProcessing)
 {
