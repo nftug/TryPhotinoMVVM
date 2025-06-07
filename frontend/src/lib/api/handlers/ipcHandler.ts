@@ -12,32 +12,15 @@ import {
   ViewModelTypeName
 } from '../types/apiTypes'
 import { AppCommandEnvelope, AppEventEnvelope } from '../types/appTypes'
+import {
+  Command,
+  CommandArguments,
+  CommandResult,
+  EmitterKey,
+  EmitterKeyOptions,
+  Event
+} from '../types/handlerTypes'
 import { ViewModelError } from '../types/viewModelError'
-
-// types
-
-type EmitterKey = `state:${ViewId}:${string}` | `result:${CommandId}:${string}`
-
-type EmitterKeyOptions =
-  | { viewId: ViewId; event: string }
-  | { commandId: CommandId; commandName: string }
-
-export type Event<T extends EventEnvelope, TName extends T['event']> = Extract<T, { event: TName }>
-
-export type Command<T extends CommandEnvelope, TName extends T['command']> = Extract<
-  T,
-  { command: TName }
->
-
-export type CommandResult<T extends EventEnvelope, TName extends T['commandName']> = Extract<
-  T,
-  { commandName: TName }
->
-
-export type CommandArguments<TCommand extends CommandEnvelope, TName extends TCommand['command']> =
-  Extract<TCommand, { command: TName }> extends { payload: infer P } ? [payload: P] : []
-
-// global variables
 
 let ipcMessenger: IpcMessenger
 
@@ -51,8 +34,6 @@ const generateEmitterKey = (opts: EmitterKeyOptions | EventMessage) =>
       ({ commandName, commandId }) => `result:${commandId}:${camelCase(commandName)}`
     )
     .otherwise(({ viewId, event }) => `state:${viewId}:${camelCase(event)}`)
-
-// global methods
 
 export const initializeIpcHandler = (messenger: IpcMessenger) => {
   ipcMessenger = messenger
@@ -125,12 +106,12 @@ export const initView = (viewId: ViewId, viewType: ViewModelTypeName) => {
     console.error(error.details)
   })
 
-  const handleVisibilityChange = () => dispatch('leave')
-  window.addEventListener('visibilitychange', handleVisibilityChange)
+  const handlePageHide = () => dispatch('leave')
+  window.addEventListener('pagehide', handlePageHide)
 
   return () => {
     dispatch('leave')
     disposeErrorLogger()
-    window.removeEventListener('visibilitychange', handleVisibilityChange)
+    window.removeEventListener('pagehide', handlePageHide)
   }
 }

@@ -1,6 +1,5 @@
-import useViewModel from '@/lib/api/hooks/useViewModel'
-import { atom, useAtomValue, useSetAtom } from 'jotai'
-import { useEffect } from 'react'
+import useViewModel, { useProvideViewModel } from '@/lib/api/hooks/useViewModel'
+import { atom, useAtomValue } from 'jotai'
 import { CounterCommandEnvelope, CounterEventEnvelope } from '../types/counterTypes'
 
 export const counterViewModelAtom = atom<CounterViewModel>()
@@ -15,11 +14,5 @@ export type CounterViewModel = ReturnType<typeof useCounterViewModelInternal>
 
 export const useCounterViewModel = () => useAtomValue(counterViewModelAtom)
 
-export const useProvideCounterViewModel = () => {
-  const viewModel = useCounterViewModelInternal()
-  const setViewModelValue = useSetAtom(counterViewModelAtom)
-
-  useEffect(() => {
-    setViewModelValue(viewModel)
-  }, [viewModel, setViewModelValue])
-}
+export const useProvideCounterViewModel = () =>
+  useProvideViewModel(useCounterViewModelInternal, () => counterViewModelAtom)

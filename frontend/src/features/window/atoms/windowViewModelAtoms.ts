@@ -1,6 +1,5 @@
-import useViewModel from '@/lib/api/hooks/useViewModel'
-import { atom, useAtomValue, useSetAtom } from 'jotai'
-import { useEffect } from 'react'
+import useViewModel, { useProvideViewModel } from '@/lib/api/hooks/useViewModel'
+import { atom, useAtomValue } from 'jotai'
 import { WindowCommandEnvelope, WindowEventEnvelope } from '../types/windowTypes'
 
 const windowViewModelAtom = atom<WindowViewModel>()
@@ -12,11 +11,5 @@ export type WindowViewModel = ReturnType<typeof useWindowViewModelInternal>
 
 export const useWindowViewModel = () => useAtomValue(windowViewModelAtom)
 
-export const useProvideWindowViewModel = () => {
-  const viewModel = useWindowViewModelInternal()
-  const setViewModelValue = useSetAtom(windowViewModelAtom)
-
-  useEffect(() => {
-    setViewModelValue(viewModel)
-  }, [viewModel, setViewModelValue])
-}
+export const useProvideWindowViewModel = () =>
+  useProvideViewModel(useWindowViewModelInternal, () => windowViewModelAtom)
