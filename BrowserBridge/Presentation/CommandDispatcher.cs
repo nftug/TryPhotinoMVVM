@@ -4,9 +4,9 @@ using Microsoft.Extensions.Logging;
 namespace BrowserBridge;
 
 public class CommandDispatcher(
-    IViewModelResolver viewModelFactory, ILogger<CommandDispatcher> logger, IErrorHandler errorHandler)
+    IViewModelResolver[] viewModelResolvers, ILogger<CommandDispatcher> logger, IErrorHandler errorHandler)
 {
-    private readonly Dictionary<Guid, IViewModelHandle> _viewModelMap = [];
+    private readonly Dictionary<Guid, IOwnedViewModel> _viewModelMap = [];
 
     public async ValueTask DispatchAsync(string json)
     {
@@ -37,15 +37,19 @@ public class CommandDispatcher(
             var type = message.Payload?.ParsePayload(BridgeJsonContext.Default.InitCommandPayload)?.Type
                 ?? throw new InvalidOperationException("Type is required for Init action.");
 
-            if (!_viewModelMap.ContainsKey(message.ViewId))
-            {
-                var viewModelInstance = viewModelFactory.Resolve(type);
-                viewModelInstance.Value.SetViewId(message.ViewId);
+            if (_viewModelMap.ContainsKey(message.ViewId))
+                throw new InvalidOperationException($"ViewId {message.ViewId} is already registered.");
 
-                _viewModelMap[message.ViewId] = viewModelInstance;
+            var resolver = viewModelResolvers
+                .FirstOrDefault(r => r.Type.Equals(type, StringComparison.OrdinalIgnoreCase))
+                ?? throw new InvalidOperationException($"No resolver found for type: {type}");
 
-                logger.LogInformation("Registered a view for {Type}: ViewId {ViewId}", type, message.ViewId);
-            }
+            var viewModelOwned = resolver.Resolve();
+
+            viewModelOwned.Value.SetViewId(message.ViewId);
+            _viewModelMap[message.ViewId] = viewModelOwned;
+
+            logger.LogInformation("Registered a view for {Type}: ViewId {ViewId}", type, message.ViewId);
         }
         else if (action == AppActionType.Leave)
         {

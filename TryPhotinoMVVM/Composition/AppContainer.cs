@@ -11,11 +11,11 @@ namespace TryPhotinoMVVM.Composition;
 [RegisterModule(typeof(PhotinoContainerModule))]
 [RegisterModule(typeof(MinimalLoggerModule))]
 [Register(typeof(AppService), Scope.SingleInstance)]
-[RegisterFactory(typeof(ViewModelResolverFactory), Scope.SingleInstance)]
 public class AppBaseModule;
 
 [Register(typeof(CounterModel))]
 [Register(typeof(CounterViewModel))]
+[Register(typeof(CounterViewModelResolver), typeof(IViewModelResolver))]
 public class CounterModule;
 #endregion
 
@@ -28,12 +28,4 @@ public partial class AppContainer : IContainer<AppService>, IViewModelContainer;
 #region ViewModel Container
 public interface IViewModelContainer
     : IViewModelContainerBase, IContainer<CounterViewModel>;
-#endregion
-
-#region Factories
-public class ViewModelResolverFactory(AppContainerInstance container) : ViewModelResolverFactoryBase(container)
-{
-    protected override IViewModelResolver RegisterViewModels(IViewModelResolver factory)
-        => factory.Register<CounterViewModel>("Counter");
-}
 #endregion

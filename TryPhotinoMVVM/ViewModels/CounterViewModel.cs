@@ -1,5 +1,6 @@
 using System.Text.Json;
 using BrowserBridge;
+using BrowserBridge.Photino;
 using Microsoft.Extensions.Logging;
 using R3;
 using TryPhotinoMVVM.Constants;
@@ -51,5 +52,16 @@ public class CounterViewModel : ViewModelBase<CounterCommandType>
     private async ValueTask SetCountAsync(CounterSetCommandPayload payload)
     {
         await _model.ChangeCountAsync(payload.Value);
+    }
+}
+
+public class CounterViewModelResolver(AppContainerInstance container) : IViewModelResolver
+{
+    public string Type => "Counter";
+
+    public IOwnedViewModel Resolve()
+    {
+        var owned = container.Resolve<CounterViewModel>();
+        return new StrongInjectOwnedViewModel(owned);
     }
 }

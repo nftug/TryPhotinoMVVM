@@ -2,11 +2,11 @@ namespace BrowserBridge;
 
 public interface IViewModelResolver
 {
-    IViewModelResolver Register<T>(string type) where T : class, IViewModel;
-    IViewModelHandle Resolve(string type);
+    string Type { get; }
+    IOwnedViewModel Resolve();
 }
 
-public interface IViewModelHandle : IDisposable
+public interface IOwnedViewModel : IDisposable
 {
     IViewModel Value { get; }
 }

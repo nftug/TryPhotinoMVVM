@@ -7,6 +7,7 @@ namespace BrowserBridge.Photino;
 [Register(typeof(CommandDispatcher), Scope.SingleInstance)]
 [Register(typeof(ErrorHandler), typeof(IErrorHandler))]
 [Register(typeof(WindowViewModel))]
+[Register(typeof(WindowViewModelResolver), typeof(IViewModelResolver))]
 public class BridgeContainerModule;
 
 [RegisterModule(typeof(BridgeContainerModule))]
@@ -23,17 +24,4 @@ public class MinimalLoggerModule;
 
 #region Container Interfaces
 public interface IViewModelContainerBase : IContainer<WindowViewModel>;
-#endregion
-
-#region Factories
-public abstract class ViewModelResolverFactoryBase(AppContainerInstance container) : IFactory<IViewModelResolver>
-{
-    public IViewModelResolver Create()
-    {
-        var factory = new StrongInjectViewModelFactory(container).Register<WindowViewModel>("Window");
-        return RegisterViewModels(factory);
-    }
-
-    protected abstract IViewModelResolver RegisterViewModels(IViewModelResolver factory);
-}
 #endregion
