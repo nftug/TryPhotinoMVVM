@@ -1,7 +1,6 @@
-﻿using TryPhotinoMVVM.Composition;
-using TryPhotinoMVVM.Presentation;
+﻿using TryPhotinoMVVM.Photino.Composition;
 
-namespace TryPhotinoMVVM;
+namespace TryPhotinoMVVM.Photino;
 
 public class Program
 {

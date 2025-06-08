@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace TryPhotinoMVVM.Domain.Counter.Enums;
+namespace TryPhotinoMVVM.Core.Domain.Counter.Enums;
 
 [JsonConverter(typeof(JsonStringEnumConverter<FizzBuzz>))]
 public enum FizzBuzz

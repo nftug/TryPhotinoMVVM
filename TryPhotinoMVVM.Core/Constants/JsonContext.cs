@@ -1,9 +1,9 @@
 using System.Text.Json.Serialization;
 using BrowserBridge;
-using TryPhotinoMVVM.Dtos.Counter.Commands;
-using TryPhotinoMVVM.Dtos.Counter.Events;
+using TryPhotinoMVVM.Core.Dtos.Counter.Commands;
+using TryPhotinoMVVM.Core.Dtos.Counter.Events;
 
-namespace TryPhotinoMVVM.Constants;
+namespace TryPhotinoMVVM.Core.Constants;
 
 #region Counter
 [JsonSerializable(typeof(EventMessage<CounterStateDto>))]

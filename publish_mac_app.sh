@@ -1,7 +1,8 @@
 #!/bin/bash
 
 APP_NAME="TryPhotinoMVVM"
-BIN_PATH="./$APP_NAME/bin/Release/net9.0/osx-arm64/publish"
+PROJECT_NAME="TryPhotinoMVVM.Photino"
+BIN_PATH="./$PROJECT_NAME/bin/Release/net9.0/osx-arm64/publish"
 APP_BUNDLE="$APP_NAME.app"
 
 mkdir -p "$APP_BUNDLE/Contents/MacOS"

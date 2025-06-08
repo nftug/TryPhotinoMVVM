@@ -1,11 +1,11 @@
 using BrowserBridge;
 using BrowserBridge.Photino;
 using StrongInject;
-using TryPhotinoMVVM.Models;
-using TryPhotinoMVVM.Presentation;
-using TryPhotinoMVVM.ViewModels;
+using TryPhotinoMVVM.Core.Models;
+using TryPhotinoMVVM.Core.ViewModels;
+using TryPhotinoMVVM.Photino.ViewModels;
 
-namespace TryPhotinoMVVM.Composition;
+namespace TryPhotinoMVVM.Photino.Composition;
 
 #region Modules
 [RegisterModule(typeof(PhotinoContainerModule))]

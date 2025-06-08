@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e
 
+APP_NAME="TryPhotinoMVVM"
+PROJECT_NAME="TryPhotinoMVVM.Photino"
+
 case "$1" in
   run)
     echo "🟢 Starting frontend and app..."
@@ -10,7 +13,7 @@ case "$1" in
     FRONTEND_PID=$!
     cd ..
 
-    dotnet watch --project TryPhotinoMVVM/TryPhotinoMVVM.csproj run
+    dotnet watch --project "$PROJECT_NAME" run
     kill $FRONTEND_PID
     ;;
   publish)
@@ -21,14 +24,14 @@ case "$1" in
     cd ..
 
     echo "🧹 Cleaning wwwroot..."
-    rm -rf TryPhotinoMVVM/wwwroot
-    mkdir -p TryPhotinoMVVM/wwwroot
+    rm -rf "$PROJECT_NAME/wwwroot"
+    mkdir -p "$PROJECT_NAME/wwwroot"
 
     echo "📦 Copying frontend files to wwwroot..."
-    cp -r frontend/dist/* TryPhotinoMVVM/wwwroot/
+    cp -r frontend/dist/* "$PROJECT_NAME/wwwroot/"
 
     echo "🛠 Publishing .NET backend..."
-    dotnet publish TryPhotinoMVVM/TryPhotinoMVVM.csproj -c Release
+    dotnet publish "$PROJECT_NAME" -c Release
 
     if [ "$(uname)" == 'Darwin' ]; then
       ./publish_mac_app.sh

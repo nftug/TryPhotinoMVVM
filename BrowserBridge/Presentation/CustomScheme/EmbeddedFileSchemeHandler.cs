@@ -8,17 +8,30 @@ namespace BrowserBridge;
 public static class EmbeddedFileSchemeHandler
 {
     private static readonly Assembly _assembly = Assembly.GetEntryAssembly()!;
-    public static readonly EmbeddedFileProvider FileProvider = new(_assembly, $"{_assembly.GetName().Name}");
+
+    private static string DetectResourceNamespacePrefix(string rootPath)
+    {
+        var segment = rootPath.TrimStart('/').Replace('/', '.');
+
+        var match = _assembly.GetManifestResourceNames()
+            .FirstOrDefault(name => name.Contains(segment, StringComparison.OrdinalIgnoreCase))
+            ?? throw new FileNotFoundException($"Resource segment '{segment}' not found in assembly '{_assembly.FullName}'.");
+
+        var index = match.IndexOf(segment, StringComparison.OrdinalIgnoreCase);
+        var prefix = match.Substring(0, index).TrimEnd('.');
+        return prefix;
+    }
 
     public static CustomSchemeHandlerResult GetEmbeddedFile(Uri uri, string rootPath)
     {
+        var fileProvider = new EmbeddedFileProvider(_assembly, DetectResourceNamespacePrefix(rootPath));
         var path = Path.Combine(rootPath, uri.LocalPath.TrimStart('/'));
 
-        var fileInfo = FileProvider.GetFileInfo(path);
+        var fileInfo = fileProvider.GetFileInfo(path);
         if (!fileInfo.Exists)
         {
             var gzPath = path + ".gz";
-            var gzFileInfo = FileProvider.GetFileInfo(gzPath);
+            var gzFileInfo = fileProvider.GetFileInfo(gzPath);
             if (gzFileInfo.Exists)
             {
                 path = gzPath;
@@ -26,7 +39,7 @@ public static class EmbeddedFileSchemeHandler
             }
             else
             {
-                if (path == "/index.html")
+                if (path.Split('/').Last() == "index.html")
                 {
                     return new(new MemoryStream(Encoding.UTF8.GetBytes("404 Not Found")), "text/plain");
                 }

@@ -2,7 +2,7 @@ using BrowserBridge;
 using BrowserBridge.Photino;
 using Photino.NET;
 
-namespace TryPhotinoMVVM.Presentation;
+namespace TryPhotinoMVVM.Photino;
 
 public class AppService(
     AppContainerInstance containerInstance,

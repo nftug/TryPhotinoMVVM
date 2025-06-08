@@ -1,7 +1,7 @@
 using BrowserBridge;
-using TryPhotinoMVVM.Domain.Counter.Enums;
+using TryPhotinoMVVM.Core.Domain.Counter.Enums;
 
-namespace TryPhotinoMVVM.Dtos.Counter.Events;
+namespace TryPhotinoMVVM.Core.Dtos.Counter.Events;
 
 #region Events
 public record CounterStateEvent(CounterStateDto Payload)

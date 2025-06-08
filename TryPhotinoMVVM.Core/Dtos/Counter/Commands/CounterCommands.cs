@@ -1,4 +1,4 @@
-namespace TryPhotinoMVVM.Dtos.Counter.Commands;
+namespace TryPhotinoMVVM.Core.Dtos.Counter.Commands;
 
 public enum CounterCommandType
 {

@@ -1,9 +1,9 @@
 using BrowserBridge;
 using R3;
-using TryPhotinoMVVM.Domain.Counter.Entities;
-using TryPhotinoMVVM.Domain.Counter.Enums;
+using TryPhotinoMVVM.Core.Domain.Counter.Entities;
+using TryPhotinoMVVM.Core.Domain.Counter.Enums;
 
-namespace TryPhotinoMVVM.Models;
+namespace TryPhotinoMVVM.Core.Models;
 
 public class CounterModel : DisposableBase
 {
