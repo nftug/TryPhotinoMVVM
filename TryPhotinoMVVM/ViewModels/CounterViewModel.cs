@@ -12,23 +12,28 @@ namespace TryPhotinoMVVM.ViewModels;
 public class CounterViewModel : ViewModelBase<CounterCommandType>
 {
     private readonly CounterModel _model;
+    private readonly ILogger<CounterViewModel> _logger;
 
     public CounterViewModel(
         IEventDispatcher dispatcher, CounterModel model, ILogger<CounterViewModel> logger) : base(dispatcher)
     {
         _model = model;
+        _logger = logger;
+    }
 
-        NotifyObservable(_model.CounterState)
-            .Select(s => new CounterStateEvent(s!.ToDto()))
-            .Subscribe(e => Dispatch(e, JsonContext.Default.EventMessageCounterStateDto))
-            .AddTo(Disposable);
+    protected override void OnFirstRender()
+    {
+        _model.CounterState
+             .Select(s => new CounterStateEvent(s!.ToDto()))
+             .Subscribe(e => Dispatch(e, JsonContext.Default.EventMessageCounterStateDto))
+             .AddTo(Disposable);
 
-        NotifyObservable(_model.FizzBuzzReceivedCommand)
+        _model.FizzBuzzReceivedCommand
             .Select(v => new CounterFizzBuzzEvent(new(v)))
             .Subscribe(e =>
             {
                 Dispatch(e, JsonContext.Default.EventMessageCounterFizzBuzzDto);
-                logger.LogInformation("Invoked FizzBuzz in {ViewId}: {FizzBuzz}", ViewId.CurrentValue, e.Payload!.Result);
+                _logger.LogInformation("Invoked FizzBuzz in {ViewId}: {FizzBuzz}", ViewId.CurrentValue, e.Payload!.Result);
             })
             .AddTo(Disposable);
     }

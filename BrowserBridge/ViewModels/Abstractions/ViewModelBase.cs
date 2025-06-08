@@ -17,15 +17,18 @@ public abstract class ViewModelBase<TCommandType> : DisposableBase, IViewModel
         _dispatcher = dispatcher;
         _viewId.AddTo(Disposable);
         ViewId = _viewId.ToReadOnlyReactiveProperty().AddTo(Disposable);
+
+        _viewId.Where(v => v != Guid.Empty)
+            .Subscribe(_ => OnFirstRender())
+            .AddTo(Disposable);
     }
+
+    protected abstract void OnFirstRender();
 
     public ValueTask HandleAsync(CommandMessage message)
         => Enum.TryParse<TCommandType>(message.Command, true, out var action)
             ? HandleActionAsync(action, message.Payload, message.CommandId)
             : ValueTask.CompletedTask;
-
-    protected Observable<T> NotifyObservable<T>(Observable<T> observable)
-        => _viewId.Where(v => v != default).CombineLatest(observable, (_, v) => v);
 
     protected void Dispatch<T>(EventMessage<T> message)
         => _dispatcher.Dispatch(message with { ViewId = _viewId.Value });
@@ -35,7 +38,13 @@ public abstract class ViewModelBase<TCommandType> : DisposableBase, IViewModel
 
     protected abstract ValueTask HandleActionAsync(TCommandType action, JsonElement? payload, Guid? commandId);
 
-    public void SetViewId(Guid viewId) => _viewId.Value = viewId;
+    public void SetViewId(Guid viewId)
+    {
+        if (viewId == Guid.Empty)
+            throw new ArgumentException("ViewId cannot be empty.", nameof(viewId));
+        if (_viewId.Value != Guid.Empty)
+            throw new InvalidOperationException("ViewId has already been set.");
 
-    public virtual void OnFirstRender() { }
+        _viewId.Value = viewId;
+    }
 }

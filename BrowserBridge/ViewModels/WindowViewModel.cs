@@ -5,6 +5,8 @@ namespace BrowserBridge;
 public class WindowViewModel(IEventDispatcher eventDispatcher, IDialogService dialogService)
     : ViewModelBase<WindowCommandType>(eventDispatcher)
 {
+    protected override void OnFirstRender() { }
+
     protected override ValueTask HandleActionAsync(WindowCommandType action, JsonElement? payload, Guid? commandId)
         => (action, payload) switch
         {

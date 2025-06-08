@@ -46,8 +46,6 @@ public class CommandDispatcher(
 
                 logger.LogInformation("Registered a view for {Type}: ViewId {ViewId}", type, message.ViewId);
             }
-
-            _viewModelMap[message.ViewId].Value.OnFirstRender();
         }
         else if (action == AppActionType.Leave)
         {
