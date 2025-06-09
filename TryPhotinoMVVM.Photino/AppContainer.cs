@@ -3,9 +3,8 @@ using BrowserBridge.Photino;
 using StrongInject;
 using TryPhotinoMVVM.Core.Models;
 using TryPhotinoMVVM.Core.ViewModels;
-using TryPhotinoMVVM.Photino.ViewModels;
 
-namespace TryPhotinoMVVM.Photino.Composition;
+namespace TryPhotinoMVVM.Photino;
 
 #region Modules
 [RegisterModule(typeof(PhotinoContainerModule))]

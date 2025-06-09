@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 
-namespace BrowserBridge.Photino;
+namespace BrowserBridge;
 
 public interface ILogWriter
 {

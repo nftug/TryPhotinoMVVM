@@ -3,7 +3,7 @@ using Photino.NET;
 namespace BrowserBridge.Photino;
 
 public abstract class PhotinoAppServiceBase(
-    AppContainerInstance appContainerInstance,
+    IContainerInstance appContainerInstance,
     PhotinoWindowInstance windowInstance,
     CommandDispatcher dispatcher,
     IErrorHandler errorHandler

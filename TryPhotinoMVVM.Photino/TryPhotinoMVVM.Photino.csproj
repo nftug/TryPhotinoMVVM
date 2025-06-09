@@ -20,8 +20,6 @@
         <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
         <AssemblyName>TryPhotinoMVVM</AssemblyName>
         <AssemblyTitle>Try Photino MVVM</AssemblyTitle>
-
-        <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)' == 'Debug'">

@@ -1,12 +1,13 @@
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
+using StrongInject;
 
 namespace BrowserBridge;
 
 public class CommandDispatcher(
-    IViewModelResolver[] viewModelResolvers, ILogger<CommandDispatcher> logger, IErrorHandler errorHandler)
+    IEnumerable<IViewModelResolver> viewModelResolvers, ILogger<CommandDispatcher> logger, IErrorHandler errorHandler)
 {
-    private readonly Dictionary<Guid, IOwnedViewModel> _viewModelMap = [];
+    private readonly Dictionary<Guid, IOwnedService<IViewModel>> _viewModelMap = [];
 
     public async ValueTask DispatchAsync(string json)
     {
@@ -62,4 +63,12 @@ public class CommandDispatcher(
             }
         }
     }
+}
+
+public class CommandDispatcherFactory(
+    IViewModelResolver[] viewModelResolvers, ILogger<CommandDispatcher> logger, IErrorHandler errorHandler)
+    : IFactory<CommandDispatcher>
+{
+    public CommandDispatcher Create() =>
+        new CommandDispatcher(viewModelResolvers, logger, errorHandler);
 }

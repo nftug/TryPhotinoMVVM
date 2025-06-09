@@ -5,7 +5,7 @@ using Photino.NET;
 namespace TryPhotinoMVVM.Photino;
 
 public class AppService(
-    AppContainerInstance containerInstance,
+    IContainerInstance containerInstance,
     PhotinoWindowInstance windowInstance,
     CommandDispatcher dispatcher,
     IErrorHandler errorHandler

@@ -53,3 +53,8 @@ public class CounterViewModel : ViewModelBase<CounterCommandType>
         await _model.ChangeCountAsync(payload.Value);
     }
 }
+
+public class CounterViewModelResolver(IContainerInstance container) : ViewModelResolverBase<CounterViewModel>(container)
+{
+    public override string Type => "Counter";
+}

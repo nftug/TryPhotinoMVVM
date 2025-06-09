@@ -3,10 +3,16 @@ namespace BrowserBridge;
 public interface IViewModelResolver
 {
     string Type { get; }
-    IOwnedViewModel Resolve();
+    IOwnedService<IViewModel> Resolve();
 }
 
-public interface IOwnedViewModel : IDisposable
+public abstract class ViewModelResolverBase<TViewModel>(IContainerInstance container) : IViewModelResolver
+    where TViewModel : class, IViewModel
 {
-    IViewModel Value { get; }
+    protected readonly IContainerInstance Container = container;
+
+    public abstract string Type { get; }
+
+    public virtual IOwnedService<IViewModel> Resolve()
+        => (IOwnedService<IViewModel>)Container.Resolve<TViewModel>();
 }
