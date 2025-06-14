@@ -5,7 +5,7 @@ import { WindowCommandEnvelope, WindowEventEnvelope } from '../types/windowTypes
 const windowViewModelAtom = atom<WindowViewModel>()
 
 const useWindowViewModelInternal = () =>
-  useViewModel<WindowEventEnvelope, WindowCommandEnvelope>('Window')
+  useViewModel<WindowEventEnvelope, WindowCommandEnvelope>('WindowViewModel')
 
 export type WindowViewModel = ReturnType<typeof useWindowViewModelInternal>
 

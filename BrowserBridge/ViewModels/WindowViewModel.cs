@@ -28,7 +28,5 @@ public class WindowViewModel(IEventDispatcher eventDispatcher, IDialogService di
     }
 }
 
-public class WindowViewModelResolver(IContainerInstance container) : ViewModelResolverBase<WindowViewModel>(container)
-{
-    public override string Type => "Window";
-}
+public class WindowViewModelResolver(IContainerInstance container)
+    : ViewModelResolverBase<WindowViewModel>(container);

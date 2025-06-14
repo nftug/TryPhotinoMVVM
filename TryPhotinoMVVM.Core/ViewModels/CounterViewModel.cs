@@ -54,7 +54,5 @@ public class CounterViewModel : ViewModelBase<CounterCommandType>
     }
 }
 
-public class CounterViewModelResolver(IContainerInstance container) : ViewModelResolverBase<CounterViewModel>(container)
-{
-    public override string Type => "Counter";
-}
+public class CounterViewModelResolver(IContainerInstance container)
+    : ViewModelResolverBase<CounterViewModel>(container);

@@ -11,7 +11,7 @@ public abstract class ViewModelResolverBase<TViewModel>(IContainerInstance conta
 {
     protected readonly IContainerInstance Container = container;
 
-    public abstract string Type { get; }
+    public string Type => typeof(TViewModel).Name;
 
     public virtual IOwnedService<IViewModel> Resolve()
         => (IOwnedService<IViewModel>)Container.Resolve<TViewModel>();

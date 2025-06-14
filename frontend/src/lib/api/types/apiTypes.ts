@@ -3,7 +3,7 @@ export interface IpcMessenger {
   receiveMessage(callback: (message: string) => void): void
 }
 
-export type ViewModelTypeName = 'Window' | 'Counter'
+export type ViewModelTypeName = 'WindowViewModel' | 'CounterViewModel'
 
 export type ViewId = ReturnType<typeof crypto.randomUUID> & { readonly __brand: 'ViewId' }
 
