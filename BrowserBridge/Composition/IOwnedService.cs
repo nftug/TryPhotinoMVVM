@@ -17,18 +17,12 @@ public class StrongInjectOwnedService<T>(IOwned<T> owned) : IOwnedService<T>
     public void Dispose() => owned.Dispose();
 }
 
-public class MsDependencyInjectionOwnedService<T> : IOwnedService<T>
+public class MsDependencyInjectionOwnedService<T>(IServiceProvider serviceProvider) : IOwnedService<T>
     where T : class
 {
-    private readonly IServiceScope _scope;
+    private readonly IServiceScope scope = serviceProvider.CreateAsyncScope();
 
-    public T Value { get; }
+    public T Value => scope.ServiceProvider.GetRequiredService<T>();
 
-    public MsDependencyInjectionOwnedService(IServiceScope scope)
-    {
-        _scope = scope;
-        Value = scope.ServiceProvider.GetRequiredService<T>();
-    }
-
-    public void Dispose() => _scope.Dispose();
+    public void Dispose() => scope.Dispose();
 }

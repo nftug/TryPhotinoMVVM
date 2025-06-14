@@ -37,8 +37,6 @@ public class MsDependencyInjectionContainerInstance : IContainerInstance
         if (_serviceProvider == null)
             throw new InvalidOperationException("AppContainer is not injected");
 
-        var scope = _serviceProvider.CreateScope();
-
-        return new MsDependencyInjectionOwnedService<T>(scope);
+        return new MsDependencyInjectionOwnedService<T>(_serviceProvider);
     }
 }
