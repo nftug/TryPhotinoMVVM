@@ -1,6 +1,5 @@
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
-using StrongInject;
 
 namespace BrowserBridge;
 
@@ -11,23 +10,25 @@ public class CommandDispatcher(
 
     public async ValueTask DispatchAsync(string json)
     {
-        var message = JsonSerializer.Deserialize(json, BridgeJsonContext.Default.CommandMessage);
-        if (message == null) return;
+        CommandMessage? message = null;
 
         try
         {
+            message = JsonSerializer.Deserialize(json, BridgeJsonContext.Default.CommandMessage)
+                ?? throw new Exception("CommandMessage cannot be null.");
+
             if (Enum.TryParse<AppActionType>(message.Command, true, out var action))
-            {
                 HandleDefaultAction(message, action);
-            }
+
             else if (_viewModelMap.TryGetValue(message.ViewId, out var viewModel))
-            {
                 await viewModel.Value.HandleAsync(message);
-            }
+
+            else
+                throw new InvalidOperationException($"Invalid command: {json}");
         }
         catch (Exception e)
         {
-            errorHandler.HandleError(new ViewModelException(message.ViewId, e.Message, e));
+            errorHandler.HandleError(new ViewModelException(message?.ViewId ?? Guid.Empty, e.Message, e));
         }
     }
 
@@ -42,7 +43,7 @@ public class CommandDispatcher(
                 throw new InvalidOperationException($"ViewId {message.ViewId} is already registered.");
 
             var resolver = viewModelResolvers
-                .FirstOrDefault(r => r.Type.Equals(type, StringComparison.OrdinalIgnoreCase))
+                .SingleOrDefault(r => r.Type.Equals(type, StringComparison.OrdinalIgnoreCase))
                 ?? throw new InvalidOperationException($"No resolver found for type: {type}");
 
             var viewModelOwned = resolver.Resolve();
@@ -63,12 +64,4 @@ public class CommandDispatcher(
             }
         }
     }
-}
-
-public class CommandDispatcherFactory(
-    IViewModelResolver[] viewModelResolvers, ILogger<CommandDispatcher> logger, IErrorHandler errorHandler)
-    : IFactory<CommandDispatcher>
-{
-    public CommandDispatcher Create() =>
-        new CommandDispatcher(viewModelResolvers, logger, errorHandler);
 }

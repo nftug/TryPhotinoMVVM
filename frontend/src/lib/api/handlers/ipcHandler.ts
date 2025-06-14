@@ -8,8 +8,7 @@ import {
   EventEnvelope,
   EventMessage,
   IpcMessenger,
-  ViewId,
-  ViewModelTypeName
+  ViewId
 } from '../types/apiTypes'
 import { AppCommandEnvelope, AppEventEnvelope } from '../types/appTypes'
 import {
@@ -94,7 +93,7 @@ export const createInvoker = <TEvent extends EventEnvelope, TCommand extends Com
   }
 }
 
-export const initView = (viewId: ViewId, viewType: ViewModelTypeName) => {
+export const initView = (viewId: ViewId, viewType: string) => {
   const dispatch = createDispatcher<AppCommandEnvelope>(viewId)
   const subscribe = createSubscriber<AppEventEnvelope>(viewId)
 

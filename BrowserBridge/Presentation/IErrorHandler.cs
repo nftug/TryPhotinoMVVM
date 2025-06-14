@@ -24,6 +24,6 @@ public class ErrorHandler(
             eventDispatcher.Dispatch(errorEvent, BridgeJsonContext.Default.EventMessageViewModelError);
         }
 
-        dialogService.ShowMessageBox(EnvironmentConstants.AppName, exception.Message, icon: IconType.Error);
+        dialogService.ShowMessageBox(exception.Message, EnvironmentConstants.AppName, icon: IconType.Error);
     }
 }

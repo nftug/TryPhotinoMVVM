@@ -2,14 +2,14 @@ import { PrimitiveAtom, useSetAtom } from 'jotai'
 import type { Unsubscribe } from 'nanoevents'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { createDispatcher, createInvoker, createSubscriber, initView } from '../handlers/ipcHandler'
-import type { CommandEnvelope, EventEnvelope, ViewId, ViewModelTypeName } from '../types/apiTypes'
+import type { CommandEnvelope, EventEnvelope, ViewId } from '../types/apiTypes'
 
 export type ViewModel<TEvent extends EventEnvelope, TCommand extends CommandEnvelope> = ReturnType<
   typeof useViewModel<TEvent, TCommand>
 >
 
 const useViewModel = <TEvent extends EventEnvelope, TCommand extends CommandEnvelope>(
-  viewType: ViewModelTypeName
+  viewType: string
 ) => {
   const viewId = useMemo(() => crypto.randomUUID() as ViewId, [])
 

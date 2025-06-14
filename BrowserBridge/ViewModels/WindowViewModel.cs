@@ -27,6 +27,3 @@ public class WindowViewModel(IEventDispatcher eventDispatcher, IDialogService di
         }
     }
 }
-
-public class WindowViewModelResolver(IContainerInstance container)
-    : ViewModelResolverBase<WindowViewModel>(container);

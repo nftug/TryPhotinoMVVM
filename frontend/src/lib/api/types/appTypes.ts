@@ -1,5 +1,3 @@
-import { ViewModelTypeName } from './apiTypes'
-
 // Default events and commands
 export type AppEventEnvelope = {
   event: 'error'
@@ -7,7 +5,7 @@ export type AppEventEnvelope = {
 }
 
 export type AppCommandEnvelope =
-  | { command: 'init'; payload: { type: ViewModelTypeName } }
+  | { command: 'init'; payload: { type: string } }
   | { command: 'leave' }
 
 // DTO

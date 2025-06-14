@@ -9,7 +9,7 @@ namespace TryPhotinoMVVM.Core.Composition;
 #region StrongInject Modules
 [Register(typeof(CounterModel))]
 [Register(typeof(CounterViewModel))]
-[Register(typeof(CounterViewModelResolver), typeof(IViewModelResolver))]
+[Register(typeof(ViewModelResolver<CounterViewModel>), typeof(IViewModelResolver))]
 public class CounterModule;
 
 public interface IViewModelContainer
@@ -23,7 +23,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddScoped<CounterModel>();
         services.AddScoped<CounterViewModel>();
-        services.AddScoped<IViewModelResolver, CounterViewModelResolver>();
+        services.AddScoped<IViewModelResolver, ViewModelResolver<CounterViewModel>>();
 
         return services;
     }

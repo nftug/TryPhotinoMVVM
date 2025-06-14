@@ -14,7 +14,7 @@ public class AppBaseModule;
 
 [Register(typeof(CounterModel))]
 [Register(typeof(CounterViewModel))]
-[Register(typeof(CounterViewModelResolver), typeof(IViewModelResolver))]
+[Register(typeof(ViewModelResolver<CounterViewModel>), typeof(IViewModelResolver))]
 public class CounterModule;
 #endregion
 

@@ -9,7 +9,7 @@ namespace BrowserBridge;
 [Register(typeof(ErrorHandler), Scope.SingleInstance, typeof(IErrorHandler))]
 [Register(typeof(StrongInjectContainerInstance), Scope.SingleInstance, typeof(IContainerInstance))]
 [Register(typeof(WindowViewModel))]
-[Register(typeof(WindowViewModelResolver), typeof(IViewModelResolver))]
+[Register(typeof(ViewModelResolver<WindowViewModel>), typeof(IViewModelResolver))]
 public class BridgeContainerModule;
 
 [Register(typeof(ConsoleLogWriter), typeof(ILogWriter))]
@@ -17,6 +17,13 @@ public class BridgeContainerModule;
 public class MinimalLoggerModule;
 
 public interface IViewModelContainerBase : IContainer<WindowViewModel>;
+
+public class CommandDispatcherFactory(
+    IViewModelResolver[] viewModelResolvers, ILogger<CommandDispatcher> logger, IErrorHandler errorHandler)
+    : IFactory<CommandDispatcher>
+{
+    public CommandDispatcher Create() => new(viewModelResolvers, logger, errorHandler);
+}
 #endregion
 
 #region MsDependencyInjection Modules
@@ -29,7 +36,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IContainerInstance, MsDependencyInjectionContainerInstance>();
 
         services.AddScoped<WindowViewModel>();
-        services.AddScoped<IViewModelResolver, WindowViewModelResolver>();
+        services.AddScoped<IViewModelResolver, ViewModelResolver<WindowViewModel>>();
 
         return services;
     }

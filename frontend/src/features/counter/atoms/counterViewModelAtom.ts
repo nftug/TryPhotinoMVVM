@@ -5,7 +5,7 @@ import { CounterCommandEnvelope, CounterEventEnvelope } from '../types/counterTy
 export const counterViewModelAtom = atom<CounterViewModel>()
 
 const useCounterViewModelInternal = () => {
-  const viewModel = useViewModel<CounterEventEnvelope, CounterCommandEnvelope>('CounterViewModel')
+  const viewModel = useViewModel<CounterEventEnvelope, CounterCommandEnvelope>('counter')
   const state = viewModel.useViewState('state')
   return { state, ...viewModel }
 }
