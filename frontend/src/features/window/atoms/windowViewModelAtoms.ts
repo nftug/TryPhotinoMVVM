@@ -12,4 +12,4 @@ export type WindowViewModel = ReturnType<typeof useWindowViewModelInternal>
 export const useWindowViewModel = () => useAtomValue(windowViewModelAtom)
 
 export const useProvideWindowViewModel = () =>
-  useProvideViewModel(useWindowViewModelInternal, () => windowViewModelAtom)
+  useProvideViewModel(useWindowViewModelInternal, windowViewModelAtom)

@@ -1,6 +1,6 @@
 import { PrimitiveAtom, useSetAtom } from 'jotai'
 import type { Unsubscribe } from 'nanoevents'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { createDispatcher, createInvoker, createSubscriber, initView } from '../handlers/ipcHandler'
 import type { CommandEnvelope, EventEnvelope, ViewId, ViewModelTypeName } from '../types/apiTypes'
 
@@ -41,10 +41,11 @@ export default useViewModel
 
 export const useProvideViewModel = <TViewModel>(
   useViewModelInternal: () => TViewModel,
-  atomFn: () => PrimitiveAtom<TViewModel | undefined>
+  atom: PrimitiveAtom<TViewModel | undefined>
 ) => {
   const viewModel = useViewModelInternal()
-  const setViewModelValue = useSetAtom(atomFn())
+  const atomRef = useRef(atom)
+  const setViewModelValue = useSetAtom(atomRef.current)
 
   useEffect(() => {
     setViewModelValue(viewModel)

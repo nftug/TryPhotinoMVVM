@@ -15,4 +15,4 @@ export type CounterViewModel = ReturnType<typeof useCounterViewModelInternal>
 export const useCounterViewModel = () => useAtomValue(counterViewModelAtom)
 
 export const useProvideCounterViewModel = () =>
-  useProvideViewModel(useCounterViewModelInternal, () => counterViewModelAtom)
+  useProvideViewModel(useCounterViewModelInternal, counterViewModelAtom)
