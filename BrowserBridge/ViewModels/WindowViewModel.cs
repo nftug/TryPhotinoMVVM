@@ -18,7 +18,7 @@ public class WindowViewModel(IEventDispatcher eventDispatcher, IDialogService di
     private void ShowMessageBox(MessageBoxCommandPayload command, Guid? commandId)
     {
         string title = command.Title ?? EnvironmentConstants.AppName;
-        var dialogResult = dialogService.ShowMessageBox(title, command.Message, command.Buttons, command.Icon);
+        var dialogResult = dialogService.ShowMessageBox(command.Message, title, command.Buttons, command.Icon);
 
         if (commandId != null)
         {
